@@ -33,7 +33,6 @@ def connect_to_db():
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor
         )
-        print("[OK] Conectado a la base de datos correctamente.")
         return connection
     except pymysql.MySQLError as e:
         print(f"[ERROR] No se pudo conectar a MySQL: {e}")
@@ -135,6 +134,7 @@ def insert_data(conversations):
         with connection.cursor() as cursor:
             # Insertar las conversaciones
             print("[INFO] Insertando conversaciones...")
+            conv_count = 0
             for conv in conversations:
                 conversation_id = conv.get("id", "")
                 if not conversation_id:
@@ -146,11 +146,14 @@ def insert_data(conversations):
                               (conversation_id, default_model_slug, is_archived) 
                               VALUES (%s, %s, %s)"""
                 cursor.execute(sql_conv, (conversation_id, default_model_slug, is_archived))
+                conv_count += 1
 
             connection.commit()
+            print(f"[OK] {conv_count} conversaciones insertadas.")
 
             # Insertar los mensajes
             print("[INFO] Insertando mensajes...")
+            message_count = 0
             message_ids = set()
             for conv in conversations:
                 conversation_id = conv.get("id", "")
@@ -179,11 +182,14 @@ def insert_data(conversations):
                                  VALUES (%s, %s, %s, %s, %s, %s)"""
                     cursor.execute(sql_msg, (message_id, conversation_id, author_role, create_time, content, parent_id))
                     message_ids.add(message_id)
+                    message_count += 1
 
             connection.commit()
+            print(f"[OK] {message_count} mensajes insertados.")
 
             # Insertar relaciones
             print("[INFO] Insertando relaciones...")
+            relation_count = 0
             for conv in conversations:
                 for msg_id, msg in conv.get("mapping", {}).items():
                     if not isinstance(msg, dict):
@@ -197,9 +203,10 @@ def insert_data(conversations):
                                      (parent_id, child_id) 
                                      VALUES (%s, %s)"""
                         cursor.execute(sql_rel, (parent_id, child_id))
+                        relation_count += 1
 
             connection.commit()
-            print("[OK] Datos insertados correctamente en MySQL.")
+            print(f"[OK] {relation_count} relaciones insertadas.")
 
     except pymysql.MySQLError as e:
         print(f"[ERROR] No se pudieron insertar datos: {e}")
