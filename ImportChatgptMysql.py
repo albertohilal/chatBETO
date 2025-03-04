@@ -1,7 +1,7 @@
-import zipfile
 import json
-import pymysql
 import os
+import pymysql
+import zipfile
 
 # Configuración de la base de datos
 DB_CONFIG = {
@@ -14,161 +14,162 @@ DB_CONFIG = {
 
 ZIP_FILE = "conversations.zip"
 EXTRACT_PATH = "./extracted"
-JSON_FILENAME = "conversations.json"
+JSON_FILES = [
+    "user.json",
+    "conversations.json",
+    "message_feedback.json",
+    "model_comparisons.json",
+    "shared_conversations.json"
+]
 
-# Conectar a la base de datos
 def connect_to_db():
+    """Conecta a la base de datos MySQL"""
     try:
-        connection = pymysql.connect(
-            host=DB_CONFIG["host"],
-            user=DB_CONFIG["user"],
-            password=DB_CONFIG["password"],
-            database=DB_CONFIG["database"],
-            port=DB_CONFIG["port"],
-            charset="utf8mb4"
-        )
-        print("Conectado a la base de datos correctamente.")
+        connection = pymysql.connect(**DB_CONFIG, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
+        print("[OK] Conectado a la base de datos correctamente.")
         return connection
     except pymysql.MySQLError as e:
-        print(f"Error al conectar a MySQL: {e}")
+        print(f"[ERROR] No se pudo conectar a MySQL: {e}")
         return None
 
-# Extraer archivo ZIP
+def drop_tables():
+    """Elimina las tablas en el orden correcto para evitar errores de claves foráneas"""
+    connection = connect_to_db()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+                tables_to_delete = ["message_feedback", "shared_conversations", "model_comparisons", "message_relations", "messages", "conversations"]
+                for table in tables_to_delete:
+                    cursor.execute(f"DROP TABLE IF EXISTS {table};")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            connection.commit()
+            print("[OK] Tablas eliminadas correctamente.")
+        except pymysql.MySQLError as e:
+            print(f"[ERROR] No se pudieron eliminar las tablas: {e}")
+        finally:
+            connection.close()
+
 def extract_zip(zip_path, extract_to):
+    """Extrae el archivo ZIP que contiene los JSON"""
     try:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_to)
-        print(f"Archivo ZIP extraído correctamente en {extract_to}.")
+        print(f"[OK] Archivo ZIP extraído en {extract_to}.")
         return True
     except Exception as e:
-        print(f"Error al extraer ZIP: {e}")
+        print(f"[ERROR] No se pudo extraer ZIP: {e}")
         return False
 
-# Leer archivo JSON
-def load_json_file(json_path):
+def load_json(file_path):
+    """Carga un archivo JSON"""
+    if not os.path.exists(file_path):
+        print(f"[ERROR] No se encontró el archivo JSON: {file_path}")
+        return None
     try:
-        with open(json_path, 'r', encoding='utf-8') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
-        print(f"Archivo JSON {json_path} cargado correctamente.")
+        print(f"[OK] JSON cargado: {file_path}.")
         return data
     except Exception as e:
-        print(f"Error al cargar JSON {json_path}: {e}")
+        print(f"[ERROR] No se pudo cargar JSON {file_path}: {e}")
         return None
 
-# Eliminar tablas
-def drop_tables():
-    connection = connect_to_db()
-    if connection:
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute("DROP TABLE IF EXISTS message_relations;")
-                cursor.execute("DROP TABLE IF EXISTS messages;")
-                cursor.execute("DROP TABLE IF EXISTS conversations;")
-            connection.commit()
-            print("Tablas eliminadas correctamente.")
-        finally:
-            connection.close()
-
-# Crear tablas
-def create_tables():
-    connection = connect_to_db()
-    if connection:
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute("""
-                CREATE TABLE conversations (
-                    conversation_id VARCHAR(50) PRIMARY KEY,
-                    default_model_slug VARCHAR(50),
-                    is_archived TINYINT(1)
-                );
-                """)
-                cursor.execute("""
-                CREATE TABLE messages (
-                    id VARCHAR(50) PRIMARY KEY,
-                    conversation_id VARCHAR(50),
-                    author_role VARCHAR(50),
-                    create_time FLOAT,
-                    content TEXT,
-                    parent_id VARCHAR(50),
-                    FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id) ON DELETE CASCADE
-                );
-                """)
-                cursor.execute("""
-                CREATE TABLE message_relations (
-                    parent_id VARCHAR(50),
-                    child_id VARCHAR(50),
-                    PRIMARY KEY (parent_id, child_id),
-                    FOREIGN KEY (parent_id) REFERENCES messages(id) ON DELETE CASCADE,
-                    FOREIGN KEY (child_id) REFERENCES messages(id) ON DELETE CASCADE
-                );
-                """)
-            connection.commit()
-            print("Tablas creadas correctamente.")
-        finally:
-            connection.close()
-
-# Insertar datos en la base de datos
-def insert_data(data):
-    connection = connect_to_db()
-    if connection is None:
+def create_table_from_json(table_name, data):
+    """Crea una tabla basada en la estructura del JSON"""
+    if not isinstance(data, list) or len(data) == 0:
+        print(f"[INFO] No hay datos en {table_name}, se omite la creación.")
         return
-    try:
-        with connection.cursor() as cursor:
-            # Insertar conversaciones
-            print("Insertando conversaciones...")
-            for conv in data:
-                sql = "INSERT INTO conversations (conversation_id, default_model_slug, is_archived) VALUES (%s, %s, %s)"
-                cursor.execute(sql, (conv["id"], conv.get("default_model_slug", None), conv.get("is_archived", 0)))
-            connection.commit()
-            
-            # Insertar mensajes
-            print("Insertando mensajes...")
-            for conv in data:
-                for msg in conv.get("mapping", {}).values():
-                    message = msg.get("message", {})
-                    if not message or "id" not in message:
-                        continue
-                    
-                    # Convertir contenido a string
-                    content = message.get("content", "")
-                    if isinstance(content, (dict, list)):  # Si es dict o lista, convertirlo a string
-                        content = json.dumps(content, ensure_ascii=False)
 
-                    sql = "INSERT INTO messages (id, conversation_id, author_role, create_time, content, parent_id) VALUES (%s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql, (
-                        message["id"],
-                        conv["id"],
-                        message.get("author", {}).get("role", ""),
-                        message.get("create_time", 0),
-                        content,  # Ahora convertido a string
-                        msg.get("parent", None)
-                    ))
-            connection.commit()
-            
-            # Insertar relaciones entre mensajes
-            print("Insertando relaciones entre mensajes...")
-            for conv in data:
-                for msg in conv.get("mapping", {}).values():
-                    if "parent" in msg and msg["parent"]:
-                        sql = "INSERT INTO message_relations (parent_id, child_id) VALUES (%s, %s)"
-                        cursor.execute(sql, (msg["parent"], msg["message"]["id"]))
-            connection.commit()
-        print("Datos insertados correctamente en MySQL.")
-    except pymysql.MySQLError as e:
-        print(f"Error al insertar datos: {e}")
-    finally:
-        connection.close()
+    sample_record = data[0]
+    columns = []
 
-# Proceso principal
-def main():
-    drop_tables()  # Elimina las tablas antes de crearlas
-    create_tables()  # Vuelve a crearlas desde cero
+    for key, value in sample_record.items():
+        if key.lower() == "id":  
+            continue
+        if isinstance(value, int):
+            column_type = "INT"
+        elif isinstance(value, float):
+            column_type = "FLOAT"
+        elif isinstance(value, bool):
+            column_type = "TINYINT(1)"
+        else:
+            column_type = "TEXT"
 
-    if extract_zip(ZIP_FILE, EXTRACT_PATH):
-        json_path = os.path.join(EXTRACT_PATH, JSON_FILENAME)
-        data = load_json_file(json_path)
+        columns.append(f"`{key}` {column_type}")
+
+    column_definitions = ", ".join(columns)
+
+    connection = connect_to_db()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(f"""
+                    CREATE TABLE IF NOT EXISTS `{table_name}` (
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        {column_definitions}
+                    );
+                """)
+            connection.commit()
+            print(f"[OK] Tabla '{table_name}' creada.")
+        except pymysql.MySQLError as e:
+            print(f"[ERROR] No se pudo crear la tabla {table_name}: {e}")
+        finally:
+            connection.close()
+
+def insert_data(table_name, data):
+    """Inserta datos en la tabla correspondiente"""
+    if not isinstance(data, list) or len(data) == 0:
+        print(f"[INFO] No hay datos en {table_name}, omitiendo la inserción.")
+        return
+
+    connection = connect_to_db()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sample_record = data[0]
+                columns = [col for col in sample_record.keys() if col.lower() != "id"]
+                column_names = ", ".join([f"`{col}`" for col in columns])
+                placeholders = ", ".join(["%s"] * len(columns))
+
+                sql = f"INSERT INTO `{table_name}` ({column_names}) VALUES ({placeholders})"
+                values = []
+
+                for item in data:
+                    row_values = []
+                    for col in columns:
+                        val = item.get(col, None)
+                        if isinstance(val, dict):  
+                            val = json.dumps(val)  
+                        elif isinstance(val, list):
+                            val = json.dumps(val)  
+                        row_values.append(val)
+                    values.append(tuple(row_values))
+
+                cursor.executemany(sql, values)
+            connection.commit()
+            print(f"[OK] Datos insertados en '{table_name}'.")
+        except pymysql.MySQLError as e:
+            print(f"[ERROR] No se pudo insertar en {table_name}: {e}")
+        finally:
+            connection.close()
+
+def process_json_files():
+    """Procesa los archivos JSON, crea tablas y almacena los datos"""
+    for json_file in JSON_FILES:
+        file_path = os.path.join(EXTRACT_PATH, json_file)
+        data = load_json(file_path)
         if data:
-            insert_data(data)  # Inserta los datos en la base
+            table_name = json_file.replace(".json", "")
+            create_table_from_json(table_name, data)
+            insert_data(table_name, data)
+
+def main():
+    """Función principal"""
+    drop_tables()
+    extract_zip(ZIP_FILE, EXTRACT_PATH)
+    process_json_files()
+    print("[OK] Datos procesados y almacenados.")
 
 if __name__ == "__main__":
     main()
