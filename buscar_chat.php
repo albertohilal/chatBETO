@@ -15,7 +15,7 @@ if (empty($query)) {
     exit;
 }
 
-// Nueva consulta SQL con filtro para evitar mensajes vacíos y excluir 'tool' y 'system'
+// Nueva consulta SQL con detección de imágenes y audios
 $sql = "
     WITH MatchingConversations AS (
         SELECT DISTINCT conversation_id
@@ -27,11 +27,33 @@ $sql = "
         COALESCE(fum.titulo_conversacion, 'Sin título') AS titulo_conversacion, 
         FROM_UNIXTIME(m.create_time) AS fecha_hora,
         CASE 
-            WHEN m.author_role = 'user' THEN m.content 
+            WHEN m.author_role = 'user' THEN 
+                CASE 
+                    WHEN m.content LIKE '%image_asset_pointer%' THEN 
+                        CONCAT('<img src=\"/chatBeto/uploads/', 
+                               JSON_UNQUOTE(JSON_EXTRACT(m.content, '$.asset_pointer')), 
+                               '\" width=\"200\">')
+                    WHEN m.content LIKE '%audio_asset_pointer%' THEN 
+                        CONCAT('<audio controls><source src=\"/chatBeto/uploads/', 
+                               JSON_UNQUOTE(JSON_EXTRACT(m.content, '$.asset_pointer')), 
+                               '\" type=\"audio/mpeg\"></audio>')
+                    ELSE m.content
+                END 
             ELSE NULL 
         END AS mensaje_usuario,
         CASE 
-            WHEN m.author_role = 'assistant' THEN m.content 
+            WHEN m.author_role = 'assistant' THEN 
+                CASE 
+                    WHEN m.content LIKE '%image_asset_pointer%' THEN 
+                        CONCAT('<img src=\"/chatBeto/uploads/', 
+                               JSON_UNQUOTE(JSON_EXTRACT(m.content, '$.asset_pointer')), 
+                               '\" width=\"200\">')
+                    WHEN m.content LIKE '%audio_asset_pointer%' THEN 
+                        CONCAT('<audio controls><source src=\"/chatBeto/uploads/', 
+                               JSON_UNQUOTE(JSON_EXTRACT(m.content, '$.asset_pointer')), 
+                               '\" type=\"audio/mpeg\"></audio>')
+                    ELSE m.content
+                END 
             ELSE NULL 
         END AS mensaje_asistente
     FROM conversations c
