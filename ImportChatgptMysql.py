@@ -1,6 +1,6 @@
-import pymysql
-import json
 import zipfile
+import json
+import pymysql
 import os
 
 # Configuración de la base de datos
@@ -16,7 +16,7 @@ ZIP_FILE = "conversations.zip"
 EXTRACT_PATH = "./extracted"
 JSON_FILENAME = "conversations.json"
 
-# Conectar a MySQL
+# Conectar a la base de datos
 def connect_to_db():
     try:
         connection = pymysql.connect(
@@ -27,13 +27,35 @@ def connect_to_db():
             port=DB_CONFIG["port"],
             charset="utf8mb4"
         )
-        print("✅ Conectado a la base de datos correctamente.")
+        print("Conectado a la base de datos correctamente.")
         return connection
     except pymysql.MySQLError as e:
-        print(f"❌ Error al conectar a MySQL: {e}")
+        print(f"Error al conectar a MySQL: {e}")
         return None
 
-# Eliminar tablas existentes
+# Extraer archivo ZIP
+def extract_zip(zip_path, extract_to):
+    try:
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
+        print(f"Archivo ZIP extraído correctamente en {extract_to}.")
+        return True
+    except Exception as e:
+        print(f"Error al extraer ZIP: {e}")
+        return False
+
+# Leer archivo JSON
+def load_json_file(json_path):
+    try:
+        with open(json_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        print(f"Archivo JSON {json_path} cargado correctamente.")
+        return data
+    except Exception as e:
+        print(f"Error al cargar JSON {json_path}: {e}")
+        return None
+
+# Eliminar tablas
 def drop_tables():
     connection = connect_to_db()
     if connection:
@@ -43,125 +65,99 @@ def drop_tables():
                 cursor.execute("DROP TABLE IF EXISTS messages;")
                 cursor.execute("DROP TABLE IF EXISTS conversations;")
             connection.commit()
-            print("✅ Tablas eliminadas correctamente.")
+            print("Tablas eliminadas correctamente.")
         finally:
             connection.close()
 
-# Crear tablas nuevamente
+# Crear tablas
 def create_tables():
     connection = connect_to_db()
     if connection:
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    CREATE TABLE conversations (
-                        conversation_id VARCHAR(50) PRIMARY KEY,
-                        default_model_slug VARCHAR(50),
-                        is_archived TINYINT(1)
-                    );
+                CREATE TABLE conversations (
+                    conversation_id VARCHAR(50) PRIMARY KEY,
+                    default_model_slug VARCHAR(50),
+                    is_archived TINYINT(1)
+                );
                 """)
                 cursor.execute("""
-                    CREATE TABLE messages (
-                        id VARCHAR(50) PRIMARY KEY,
-                        conversation_id VARCHAR(50),
-                        author_role VARCHAR(20),
-                        create_time TIMESTAMP,
-                        content TEXT,
-                        parent_id VARCHAR(50),
-                        FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id) ON DELETE CASCADE
-                    );
+                CREATE TABLE messages (
+                    id VARCHAR(50) PRIMARY KEY,
+                    conversation_id VARCHAR(50),
+                    author_role VARCHAR(50),
+                    create_time FLOAT,
+                    content TEXT,
+                    parent_id VARCHAR(50),
+                    FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id) ON DELETE CASCADE
+                );
                 """)
                 cursor.execute("""
-                    CREATE TABLE message_relations (
-                        parent_id VARCHAR(50),
-                        child_id VARCHAR(50),
-                        PRIMARY KEY (parent_id, child_id),
-                        FOREIGN KEY (parent_id) REFERENCES messages(id) ON DELETE CASCADE,
-                        FOREIGN KEY (child_id) REFERENCES messages(id) ON DELETE CASCADE
-                    );
+                CREATE TABLE message_relations (
+                    parent_id VARCHAR(50),
+                    child_id VARCHAR(50),
+                    PRIMARY KEY (parent_id, child_id),
+                    FOREIGN KEY (parent_id) REFERENCES messages(id) ON DELETE CASCADE,
+                    FOREIGN KEY (child_id) REFERENCES messages(id) ON DELETE CASCADE
+                );
                 """)
             connection.commit()
-            print("✅ Tablas creadas correctamente.")
+            print("Tablas creadas correctamente.")
         finally:
             connection.close()
 
-# Extraer el archivo ZIP
-def extract_zip(zip_path, extract_to):
-    try:
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
-        print(f"✅ Archivo ZIP extraído correctamente en {extract_to}.")
-        return True
-    except Exception as e:
-        print(f"❌ Error al extraer ZIP: {e}")
-        return False
-
-# Cargar JSON
-def load_json_file(json_path):
-    try:
-        with open(json_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-        print(f"✅ Archivo JSON {json_path} cargado correctamente.")
-        return data
-    except Exception as e:
-        print(f"❌ Error al cargar JSON {json_path}: {e}")
-        return None
-
-# Insertar datos en MySQL
-def insert_data(conversations):
+# Insertar datos en la base de datos
+def insert_data(data):
     connection = connect_to_db()
-    if connection:
-        try:
-            with connection.cursor() as cursor:
-                print("📌 Insertando conversaciones...")
-                for conv in conversations:
-                    cursor.execute("""
-                        INSERT INTO conversations (conversation_id, default_model_slug, is_archived)
-                        VALUES (%s, %s, %s)
-                    """, (
-                        conv.get("id", ""),
-                        conv.get("default_model_slug", ""),
-                        int(conv.get("is_archived", False))
+    if connection is None:
+        return
+    try:
+        with connection.cursor() as cursor:
+            # Insertar conversaciones
+            print("Insertando conversaciones...")
+            for conv in data:
+                sql = "INSERT INTO conversations (conversation_id, default_model_slug, is_archived) VALUES (%s, %s, %s)"
+                cursor.execute(sql, (conv["id"], conv.get("default_model_slug", None), conv.get("is_archived", 0)))
+            connection.commit()
+            
+            # Insertar mensajes
+            print("Insertando mensajes...")
+            for conv in data:
+                for msg in conv.get("mapping", {}).values():
+                    message = msg.get("message", {})
+                    if not message or "id" not in message:
+                        continue
+                    
+                    # Convertir contenido a string
+                    content = message.get("content", "")
+                    if isinstance(content, (dict, list)):  # Si es dict o lista, convertirlo a string
+                        content = json.dumps(content, ensure_ascii=False)
+
+                    sql = "INSERT INTO messages (id, conversation_id, author_role, create_time, content, parent_id) VALUES (%s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql, (
+                        message["id"],
+                        conv["id"],
+                        message.get("author", {}).get("role", ""),
+                        message.get("create_time", 0),
+                        content,  # Ahora convertido a string
+                        msg.get("parent", None)
                     ))
-
-                print("📌 Insertando mensajes...")
-                for conv in conversations:
-                    for msg in conv.get("mapping", {}).values():
-                        message_id = msg.get("id", "")
-                        conversation_id = conv.get("id", "")
-                        author_role = msg.get("message", {}).get("author", {}).get("role", "unknown")
-
-                        # Verificar si es imagen o audio
-                        content_data = msg.get("message", {}).get("content", "")
-                        if isinstance(content_data, list) and len(content_data) > 0:
-                            content = content_data[0]
-                            if isinstance(content, dict) and content.get("content_type") == "image_asset_pointer":
-                                file_url = f"http://diarioiuna12.ar.nf/chatBeto/uploads/{content.get('asset_pointer').replace('file-service://', '')}-image.png"
-                                author_role = "image"
-                            elif isinstance(content, dict) and content.get("content_type") == "audio_asset_pointer":
-                                file_url = f"http://diarioiuna12.ar.nf/chatBeto/uploads/{content.get('asset_pointer').replace('file-service://', '')}-audio.mp3"
-                                author_role = "audio"
-                            else:
-                                file_url = content.get("text", "")
-                        else:
-                            file_url = content_data if isinstance(content_data, str) else ""
-
-                        create_time = msg.get("message", {}).get("create_time", None)
-                        parent_id = msg.get("parent", None)
-
-                        cursor.execute("""
-                            INSERT INTO messages (id, conversation_id, author_role, create_time, content, parent_id)
-                            VALUES (%s, %s, %s, %s, %s, %s)
-                        """, (
-                            message_id, conversation_id, author_role, create_time, file_url, parent_id
-                        ))
-
-                print("✅ Datos insertados correctamente en MySQL.")
-                connection.commit()
-        except Exception as e:
-            print(f"❌ Error al insertar datos: {e}")
-        finally:
-            connection.close()
+            connection.commit()
+            
+            # Insertar relaciones entre mensajes
+            print("Insertando relaciones entre mensajes...")
+            for conv in data:
+                for msg in conv.get("mapping", {}).values():
+                    if "parent" in msg and msg["parent"]:
+                        sql = "INSERT INTO message_relations (parent_id, child_id) VALUES (%s, %s)"
+                        cursor.execute(sql, (msg["parent"], msg["message"]["id"]))
+            connection.commit()
+        print("Datos insertados correctamente en MySQL.")
+    except pymysql.MySQLError as e:
+        print(f"Error al insertar datos: {e}")
+    finally:
+        connection.close()
 
 # Proceso principal
 def main():
