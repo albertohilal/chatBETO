@@ -15,7 +15,7 @@ DB_CONFIG = {
 ZIP_FILE = "conversations.zip"
 EXTRACT_PATH = "./extracted"
 JSON_FILES = [
-    "user.json",
+   # "user.json",
     "conversations.json",
     "message_feedback.json",
     "model_comparisons.json",
@@ -50,16 +50,16 @@ def drop_tables():
         finally:
             connection.close()
 
-def extract_zip(zip_path, extract_to):
-    """Extrae el archivo ZIP que contiene los JSON"""
-    try:
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
-        print(f"[OK] Archivo ZIP extraído en {extract_to}.")
-        return True
-    except Exception as e:
-        print(f"[ERROR] No se pudo extraer ZIP: {e}")
-        return False
+# def extract_zip(zip_path, extract_to):
+#     """Extrae el archivo ZIP que contiene los JSON"""
+#     try:
+#         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+#             zip_ref.extractall(extract_to)
+#         print(f"[OK] Archivo ZIP extraído en {extract_to}.")
+#         return True
+#     except Exception as e:
+#         print(f"[ERROR] No se pudo extraer ZIP: {e}")
+#         return False
 
 def load_json(file_path):
     """Carga un archivo JSON"""
@@ -167,7 +167,7 @@ def process_json_files():
 def main():
     """Función principal"""
     drop_tables()
-    extract_zip(ZIP_FILE, EXTRACT_PATH)
+  #  extract_zip(ZIP_FILE, EXTRACT_PATH)
     process_json_files()
     print("[OK] Datos procesados y almacenados.")
 
