@@ -7,54 +7,60 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
             padding: 20px;
-            background-color: #f4f4f4;
+            background-color: #222;
+            color: white;
             text-align: center;
         }
         input[type="text"] {
-            width: 50%;
+            width: 40%;
             padding: 10px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #666;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
         table {
             width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
-            background: white;
+            background: black;
+            color: white;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #444;
             padding: 10px;
             text-align: left;
         }
         th {
             background: #007BFF;
             color: white;
+            text-align: center;
         }
         tr:nth-child(even) {
-            background: #f2f2f2;
+            background: #333;
         }
     </style>
 </head>
 <body>
-
     <h2>Buscar Mensajes en Chat</h2>
-
     <form onsubmit="buscarMensajes(event)">
         <input type="text" id="query" placeholder="Escribe tu búsqueda..." required>
         <button type="submit">Buscar</button>
     </form>
-
     <table id="resultados">
         <thead>
             <tr>
-                <th>Conversación</th>
+                <th>Título</th>
                 <th>Fecha</th>
                 <th>Mensaje Usuario</th>
                 <th>Mensaje Asistente</th>
@@ -62,7 +68,6 @@
         </thead>
         <tbody></tbody>
     </table>
-
     <script>
         function buscarMensajes(event) {
             event.preventDefault();
@@ -73,7 +78,7 @@
                 .then(data => {
                     const tbody = document.querySelector("#resultados tbody");
                     tbody.innerHTML = "";
-
+                    
                     if (data.message) {
                         tbody.innerHTML = `<tr><td colspan="4">${data.message}</td></tr>`;
                         return;
@@ -92,6 +97,5 @@
                 .catch(error => console.error("Error:", error));
         }
     </script>
-
 </body>
 </html>
