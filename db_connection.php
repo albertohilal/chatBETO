@@ -1,19 +1,16 @@
 <?php
-// Configuración de la base de datos
-$host = "sv46.byethost46.org";
-$user = "iunaorg_b3toh";
-$password = "elgeneral2018"; // Cambia esto por tu contraseña real
-$database = "iunaorg_chatBeto";
-$port = 3306;
-
-// Conectar a MySQL
-$conn = new mysqli($host, $user, $password, $database, $port);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die(json_encode(["error" => "Conexión fallida: " . $conn->connect_error]));
+function connect_to_db() {
+    $host = "sv46.byethost46.org";
+    $dbname = "iunaorg_chatBeto";
+    $username = "iunaorg_b3toh";
+    $password = "elgeneral2018";
+    
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $conn;
+    } catch (PDOException $e) {
+        die("Error de conexión: " . $e->getMessage());
+    }
 }
-
-// Opcional: establecer el conjunto de caracteres para evitar problemas con acentos y caracteres especiales
-$conn->set_charset("utf8mb4");
 ?>

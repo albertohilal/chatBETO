@@ -27,30 +27,50 @@ def connect_to_db():
         return None
 
 
+def drop_tables():
+    """Elimina las tablas si existen."""
+    connection = connect_to_db()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+                cursor.execute("DROP TABLE IF EXISTS messages;")
+                cursor.execute("DROP TABLE IF EXISTS conversations;")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            connection.commit()
+            print("[OK] Tablas eliminadas correctamente.")
+        except pymysql.MySQLError as e:
+            print(f"[ERROR] No se pudieron eliminar las tablas: {e}")
+        finally:
+            connection.close()
+
+
 def create_tables():
-    """Crea las tablas necesarias para almacenar conversaciones y mensajes."""
+    """Crea las nuevas tablas conversations y messages."""
     connection = connect_to_db()
     if connection:
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS conversations (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        conversation_id VARCHAR(255) PRIMARY KEY,
                         title TEXT
                     );
-                ""
-                )
+                """)
                 
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS messages (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        conversation_id INT,
+                        id VARCHAR(255) PRIMARY KEY,
+                        conversation_id VARCHAR(255),
                         role VARCHAR(50),
                         content TEXT,
-                        FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+                        parts TEXT,
+                        create_time FLOAT,
+                        parent VARCHAR(255),
+                        children TEXT,
+                        FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id)
                     );
-                ""
-                )
+                """)
             connection.commit()
             print("[OK] Tablas creadas correctamente.")
         except pymysql.MySQLError as e:
@@ -59,19 +79,41 @@ def create_tables():
             connection.close()
 
 
-def insert_conversation(title, messages):
+def insert_conversation(conversation_id, title, messages):
     """Inserta una conversación y sus mensajes en la base de datos."""
+    if not conversation_id:
+        print("[WARNING] Saltando conversación sin ID válido.")
+        return
+
     connection = connect_to_db()
     if connection:
         try:
             with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO conversations (title) VALUES (%s)", (title,))
-                conversation_id = cursor.lastrowid
+                cursor.execute("INSERT INTO conversations (conversation_id, title) VALUES (%s, %s) ON DUPLICATE KEY UPDATE title=%s",
+                               (conversation_id, title, title))
                 
-                for msg in messages:
+                for msg_id, msg_data in (messages or {}).items():
+                    if not msg_data:
+                        continue
+                    
+                    message = msg_data.get("message", {}) or {}
+                    role = message.get("author", {}).get("role", "unknown")
+                    parts_list = message.get("content", {}).get("parts", [])
+                    
+                    # Convertir cada parte a string si es un diccionario
+                    parts = [json.dumps(part) if isinstance(part, dict) else str(part) for part in parts_list]
+                    content = " ".join(parts)  # Unir en una sola cadena legible
+                    
+                    create_time = message.get("create_time", 0) or 0
+                    parent = msg_data.get("parent", None)
+                    children = json.dumps(msg_data.get("children", []) or [])
+                    
                     cursor.execute(
-                        "INSERT INTO messages (conversation_id, role, content) VALUES (%s, %s, %s)",
-                        (conversation_id, msg.get("role", ""), msg.get("content", ""))
+                        """
+                        INSERT INTO messages (id, conversation_id, role, content, parts, create_time, parent, children)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        (msg_id, conversation_id, role, content, json.dumps(parts), create_time, parent, children)
                     )
             connection.commit()
             print(f"[OK] Conversación '{title}' y sus mensajes insertados.")
@@ -92,13 +134,22 @@ def process_conversations():
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
             for conversation in data:
-                insert_conversation(conversation.get("title", "Sin título"), conversation.get("mapping", {}).values())
+                if not isinstance(conversation, dict):
+                    print("[WARNING] Conversación inválida encontrada y omitida.")
+                    continue
+                
+                conversation_id = conversation.get("conversation_id") or "unknown"
+                title = conversation.get("title", "Sin título")
+                messages = conversation.get("mapping", {})
+                
+                insert_conversation(conversation_id, title, messages)
     except Exception as e:
         print(f"[ERROR] No se pudo procesar el JSON: {e}")
 
 
 def main():
     """Función principal"""
+    drop_tables()
     create_tables()
     process_conversations()
     print("[OK] Datos procesados y almacenados correctamente.")

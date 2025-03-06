@@ -4,98 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Mensajes en Chat</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #222;
-            color: white;
-            text-align: center;
-        }
-        input[type="text"] {
-            width: 40%;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #666;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background: black;
-            color: white;
-        }
-        th, td {
-            border: 1px solid #444;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background: #007BFF;
-            color: white;
-            text-align: center;
-        }
-        tr:nth-child(even) {
-            background: #333;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Buscar Mensajes en Chat</h2>
-    <form onsubmit="buscarMensajes(event)">
-        <input type="text" id="query" placeholder="Escribe tu búsqueda..." required>
-        <button type="submit">Buscar</button>
-    </form>
-    <table id="resultados">
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Fecha</th>
-                <th>Mensaje Usuario</th>
-                <th>Mensaje Asistente</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="container">
+        <h1>Buscar Mensajes en Chat</h1>
+        <form id="searchForm">
+            <input type="text" id="searchQuery" placeholder="Escribe tu búsqueda..." required>
+            <button type="submit">Buscar</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Fecha</th>
+                    <th>Mensaje Usuario</th>
+                    <th>Mensaje Asistente</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable">
+                <!-- Resultados se cargarán aquí dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+
     <script>
-        function buscarMensajes(event) {
+        document.getElementById("searchForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            const query = document.getElementById('query').value;
+            const query = document.getElementById("searchQuery").value;
 
             fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
-                    const tbody = document.querySelector("#resultados tbody");
-                    tbody.innerHTML = "";
-                    
-                    if (data.message) {
-                        tbody.innerHTML = `<tr><td colspan="4">${data.message}</td></tr>`;
-                        return;
-                    }
+                    const resultsTable = document.getElementById("resultsTable");
+                    resultsTable.innerHTML = ""; // Limpiar resultados anteriores
 
-                    data.forEach(mensaje => {
-                        const row = `<tr>
-                            <td>${mensaje.titulo_conversacion}</td>
-                            <td>${mensaje.fecha_hora}</td>
-                            <td>${mensaje.mensaje_usuario || ''}</td>
-                            <td>${mensaje.mensaje_asistente || ''}</td>
-                        </tr>`;
-                        tbody.innerHTML += row;
+                    data.forEach(row => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td>${row.title}</td>
+                            <td>${row.create_time}</td>
+                            <td>${row.user_content || ""}</td>
+                            <td>${row.assistant_content || ""}</td>
+                        `;
+                        resultsTable.appendChild(tr);
                     });
                 })
-                .catch(error => console.error("Error:", error));
-        }
+                .catch(error => console.error("Error al obtener datos:", error));
+        });
     </script>
 </body>
 </html>

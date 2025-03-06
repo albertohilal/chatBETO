@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Mensajes en Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Buscar Mensajes en Chat</h2>
+    <form onsubmit="buscarMensajes(event)">
+        <input type="text" id="query" placeholder="Escribe tu búsqueda..." required>
+        <button type="submit">Buscar</button>
+    </form>
+    <table id="resultados">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Fecha</th>
+                <th>Mensaje Usuario</th>
+                <th>Mensaje Asistente</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        function buscarMensajes(event) {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+
+            fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector("#resultados tbody");
+                    tbody.innerHTML = "";
+                    
+                    if (!Array.isArray(data)) {
+                        tbody.innerHTML = `<tr><td colspan="4">${data.message || 'Error en la búsqueda'}</td></tr>`;
+                        return;
+                    }
+                    
+                    data.forEach(mensaje => {
+                        const row = `<tr>
+                            <td>${mensaje.titulo_conversacion}</td>
+                            <td>${mensaje.fecha_hora}</td>
+                            <td>${mensaje.mensaje_usuario || ''}</td>
+                            <td>${mensaje.mensaje_asistente || ''}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.querySelector("#resultados tbody").innerHTML = `<tr><td colspan="4">Error al obtener los datos.</td></tr>`;
+                });
+        }
+    </script>
+</body>
+</html>
