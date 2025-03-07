@@ -4,35 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Mensajes en Chat</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            text-align: center;
-        }
-        table {
-            width: 90%;
-            margin: auto;
-            border-collapse: collapse;
-            background-color: white;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: blue;
-            color: white;
-        }
-        .user { background-color: #d9ebff; }
-        .assistant { background-color: #fff3c4; }
-        img {
-            max-width: 300px;
-            height: auto;
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -51,6 +23,11 @@
         </thead>
         <tbody id="resultados"></tbody>
     </table>
+
+    <div id="modal" class="modal">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <img id="modal-img" class="modal-content">
+    </div>
 
     <script>
         function buscarMensajes() {
@@ -89,7 +66,7 @@
                                     fetch(imageUrl, { method: "HEAD" }) 
                                         .then(res => {
                                             if (res.ok && !imagenEncontrada) {
-                                                celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen">`;
+                                                celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen" onclick="abrirModal('${imageUrl}')">`;
                                                 imagenEncontrada = true;
                                             }
                                         })
@@ -118,6 +95,17 @@
                     });
                 })
                 .catch(error => console.error("Error:", error));
+        }
+
+        function abrirModal(imagenSrc) {
+            const modal = document.getElementById("modal");
+            const modalImg = document.getElementById("modal-img");
+            modal.style.display = "block";
+            modalImg.src = imagenSrc;
+        }
+
+        function cerrarModal() {
+            document.getElementById("modal").style.display = "none";
         }
     </script>
 
