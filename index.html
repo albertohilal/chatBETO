@@ -7,38 +7,39 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #222;
-            color: #fff;
+            background-color: #f0f0f0;
             text-align: center;
         }
         table {
-            width: 80%;
-            margin: 20px auto;
+            width: 90%;
+            margin: auto;
             border-collapse: collapse;
+            background-color: white;
         }
         th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid black;
+            padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #007bff;
+            background-color: blue;
             color: white;
         }
-        .user-message {
-            background-color: #e0f7fa;
-            color: #000;
-        }
-        .assistant-message {
-            background-color: #ffeb3b;
-            color: #000;
+        .user { background-color: #d9ebff; }
+        .assistant { background-color: #fff3c4; }
+        img {
+            max-width: 300px;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
 <body>
+
     <h1>Buscar Mensajes en Chat</h1>
-    <input type="text" id="searchQuery" placeholder="Buscar...">
+    <input type="text" id="query" placeholder="Buscar...">
     <button onclick="buscarMensajes()">Buscar</button>
+
     <table>
         <thead>
             <tr>
@@ -48,30 +49,77 @@
                 <th>Mensaje</th>
             </tr>
         </thead>
-        <tbody id="resultsTable"></tbody>
+        <tbody id="resultados"></tbody>
     </table>
+
     <script>
         function buscarMensajes() {
-            let query = document.getElementById("searchQuery").value;
+            const query = document.getElementById("query").value;
             fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
-                    let tableBody = document.getElementById("resultsTable");
-                    tableBody.innerHTML = "";
-                    data.forEach(row => {
-                        let tr = document.createElement("tr");
-                        tr.className = row.message_role === "user" ? "user-message" : "assistant-message";
-                        tr.innerHTML = `
-                            <td>${row.title}</td>
-                            <td>${new Date(row.create_time * 1000).toLocaleString()}</td>
-                            <td>${row.message_role}</td>
-                            <td>${row.message_content}</td>
-                        `;
-                        tableBody.appendChild(tr);
+                    const resultados = document.getElementById("resultados");
+                    resultados.innerHTML = "";
+
+                    data.forEach(mensaje => {
+                        const fila = document.createElement("tr");
+                        fila.classList.add(mensaje.message_role === "user" ? "user" : "assistant");
+
+                        const celdaTitulo = document.createElement("td");
+                        celdaTitulo.textContent = mensaje.title;
+                        
+                        const celdaFecha = document.createElement("td");
+                        const fecha = new Date(mensaje.create_time * 1000);
+                        celdaFecha.textContent = fecha.toLocaleDateString() + ", " + fecha.toLocaleTimeString();
+
+                        const celdaRol = document.createElement("td");
+                        celdaRol.textContent = mensaje.message_role;
+
+                        const celdaMensaje = document.createElement("td");
+
+                        try {
+                            const contenido = JSON.parse(mensaje.message_content);
+                            if (contenido.content_type === "image_asset_pointer") {
+                                const fileID = contenido.asset_pointer.replace("file-service://", "");
+                                const posiblesExtensiones = ["png", "jpg", "jpeg", "gif", "webp"];
+                                let imagenEncontrada = false;
+
+                                posiblesExtensiones.forEach(ext => {
+                                    const imageUrl = `uploads/${fileID}-image.${ext}`;
+                                    fetch(imageUrl, { method: "HEAD" }) 
+                                        .then(res => {
+                                            if (res.ok && !imagenEncontrada) {
+                                                celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen">`;
+                                                imagenEncontrada = true;
+                                            }
+                                        })
+                                        .catch(() => {});
+                                });
+
+                                // Si no se encuentra la imagen, mostrar imagen por defecto
+                                setTimeout(() => {
+                                    if (!imagenEncontrada) {
+                                        celdaMensaje.innerHTML = `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
+                                    }
+                                }, 500);
+
+                            } else {
+                                celdaMensaje.textContent = mensaje.message_content;
+                            }
+                        } catch (e) {
+                            celdaMensaje.textContent = mensaje.message_content;
+                        }
+
+                        fila.appendChild(celdaTitulo);
+                        fila.appendChild(celdaFecha);
+                        fila.appendChild(celdaRol);
+                        fila.appendChild(celdaMensaje);
+                        resultados.appendChild(fila);
                     });
                 })
-                .catch(error => console.error("Error al obtener datos:", error));
+                .catch(error => console.error("Error:", error));
         }
     </script>
+
 </body>
 </html>
