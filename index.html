@@ -4,73 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Mensajes en Chat</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: gray;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkgray;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            color: black;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Buscar Mensajes en Chat</h1>
-    <form id="searchForm">
-        <input type="text" id="searchQuery" placeholder="Escribe tu búsqueda...">
-        <button type="submit">Buscar</button>
-    </form>
-    
-    <table>
+    <input type="text" id="searchQuery" placeholder="Ingrese búsqueda">
+    <button onclick="buscarMensajes()">Buscar</button>
+
+    <table id="resultsTable">
         <thead>
             <tr>
+                <th>Conversación ID</th>
                 <th>Título</th>
                 <th>Fecha</th>
-                <th>Mensaje Usuario</th>
-                <th>Mensaje Asistente</th>
+                <th>Rol</th>
+                <th>Mensaje</th>
             </tr>
         </thead>
-        <tbody id="resultsTable">
+        <tbody>
+            <!-- Aquí se insertarán los datos dinámicamente -->
         </tbody>
     </table>
 
     <script>
-        document.getElementById("searchForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const query = document.getElementById("searchQuery").value;
+        function buscarMensajes() {
+            let query = document.getElementById("searchQuery").value;
+            let url = `buscar_chat.php?query=${encodeURIComponent(query)}`;
 
-            fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    const resultsTable = document.getElementById("resultsTable");
-                    resultsTable.innerHTML = ""; // Limpiar resultados anteriores
+                    let tbody = document.getElementById("resultsTable").querySelector("tbody");
+                    tbody.innerHTML = ""; // Limpiar resultados anteriores
 
-                    let groupedData = {};
+                    if (data.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='5'>No se encontraron resultados</td></tr>";
+                        return;
+                    }
 
                     data.forEach(row => {
-                        const conversationId = row.conversation_id;
-                        
-                        if (!groupedData[conversationId]) {
-                            groupedData[conversationId] = {
-                                title: row.title,
-                                create_time: row.create_time,
-                                user_content: "",
-                                assistant_content: ""
-                            };
-                        }
+                        let tr = document.createElement("tr");
 
-                        if (row.message_role === "user") {
-                            groupedData[conversationId].user_content += row.message_content + "<br>";
-                        } else if (row.message_role === "assistant") {
-                            groupedData[conversationId].assistant_content += row.message_content + "<br>";
-                        }
-                    });
+                        let tdConvID = document.createElement("td");
+                        tdConvID.textContent = row.conversation_id;
 
-                    Object.values(groupedData).forEach(row => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td>${row.title}</td>
-                            <td>${row.create_time}</td>
-                            <td>${row.user_content || ""}</td>
-                            <td>${row.assistant_content || ""}</td>
-                        `;
-                        resultsTable.appendChild(tr);
+                        let tdTitle = document.createElement("td");
+                        tdTitle.textContent = row.title;
+
+                        let tdDate = document.createElement("td");
+                        tdDate.textContent = new Date(row.create_time * 1000).toLocaleString();
+
+                        let tdRole = document.createElement("td");
+                        tdRole.textContent = row.message_role;
+
+                        let tdMessage = document.createElement("td");
+                        tdMessage.textContent = row.message_content;
+
+                        tr.appendChild(tdConvID);
+                        tr.appendChild(tdTitle);
+                        tr.appendChild(tdDate);
+                        tr.appendChild(tdRole);
+                        tr.appendChild(tdMessage);
+
+                        tbody.appendChild(tr);
                     });
                 })
-                .catch(error => console.error("Error al obtener datos:", error));
-        });
+                .catch(error => console.error("Error:", error));
+        }
     </script>
+
 </body>
 </html>
