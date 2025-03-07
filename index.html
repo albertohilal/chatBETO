@@ -8,113 +8,70 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #222;
-            color: white;
+            color: #fff;
             text-align: center;
         }
-        h1 {
-            margin-top: 20px;
-        }
-        input {
-            padding: 10px;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            background-color: gray;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: darkgray;
-        }
         table {
-            width: 90%;
+            width: 80%;
             margin: 20px auto;
             border-collapse: collapse;
-            background: white;
-            color: black;
         }
         th, td {
-            border: 1px solid black;
             padding: 10px;
+            border: 1px solid #ddd;
             text-align: left;
         }
         th {
-            background-color: #007BFF;
+            background-color: #007bff;
             color: white;
+        }
+        .user-message {
+            background-color: #e0f7fa;
+            color: #000;
+        }
+        .assistant-message {
+            background-color: #ffeb3b;
+            color: #000;
         }
     </style>
 </head>
 <body>
-
     <h1>Buscar Mensajes en Chat</h1>
-    <input type="text" id="searchQuery" placeholder="Ingrese búsqueda">
+    <input type="text" id="searchQuery" placeholder="Buscar...">
     <button onclick="buscarMensajes()">Buscar</button>
-
-    <table id="resultsTable">
+    <table>
         <thead>
             <tr>
-                <th>Conversación ID</th>
                 <th>Título</th>
                 <th>Fecha</th>
                 <th>Rol</th>
                 <th>Mensaje</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Aquí se insertarán los datos dinámicamente -->
-        </tbody>
+        <tbody id="resultsTable"></tbody>
     </table>
-
     <script>
         function buscarMensajes() {
             let query = document.getElementById("searchQuery").value;
-            let url = `buscar_chat.php?query=${encodeURIComponent(query)}`;
-
-            fetch(url)
+            fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
-                    let tbody = document.getElementById("resultsTable").querySelector("tbody");
-                    tbody.innerHTML = ""; // Limpiar resultados anteriores
-
-                    if (data.length === 0) {
-                        tbody.innerHTML = "<tr><td colspan='5'>No se encontraron resultados</td></tr>";
-                        return;
-                    }
-
+                    let tableBody = document.getElementById("resultsTable");
+                    tableBody.innerHTML = "";
                     data.forEach(row => {
                         let tr = document.createElement("tr");
-
-                        let tdConvID = document.createElement("td");
-                        tdConvID.textContent = row.conversation_id;
-
-                        let tdTitle = document.createElement("td");
-                        tdTitle.textContent = row.title;
-
-                        let tdDate = document.createElement("td");
-                        tdDate.textContent = new Date(row.create_time * 1000).toLocaleString();
-
-                        let tdRole = document.createElement("td");
-                        tdRole.textContent = row.message_role;
-
-                        let tdMessage = document.createElement("td");
-                        tdMessage.textContent = row.message_content;
-
-                        tr.appendChild(tdConvID);
-                        tr.appendChild(tdTitle);
-                        tr.appendChild(tdDate);
-                        tr.appendChild(tdRole);
-                        tr.appendChild(tdMessage);
-
-                        tbody.appendChild(tr);
+                        tr.className = row.message_role === "user" ? "user-message" : "assistant-message";
+                        tr.innerHTML = `
+                            <td>${row.title}</td>
+                            <td>${new Date(row.create_time * 1000).toLocaleString()}</td>
+                            <td>${row.message_role}</td>
+                            <td>${row.message_content}</td>
+                        `;
+                        tableBody.appendChild(tr);
                     });
                 })
-                .catch(error => console.error("Error:", error));
+                .catch(error => console.error("Error al obtener datos:", error));
         }
     </script>
-
 </body>
 </html>
