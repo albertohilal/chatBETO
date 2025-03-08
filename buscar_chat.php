@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=UTF-8'); // Asegurar codificación UTF-8
 require_once 'db_connection.php';
 $conn = connect_to_db(); // Conectar a la base de datos
 
@@ -45,5 +45,6 @@ $stmt->bindValue(1, "%$query%", PDO::PARAM_STR);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode($result, JSON_PRETTY_PRINT);
+//echo json_encode($result, JSON_PRETTY_PRINT);
+echo json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Evitar caracteres Unicode escapados y mejorar legibilidad
 ?>
