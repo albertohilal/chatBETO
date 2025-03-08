@@ -52,7 +52,7 @@
                         celdaTitulo.textContent = mensaje.title;
                         
                         const celdaFecha = document.createElement("td");
-                        const fecha = new Date(mensaje.create_time * 1000);
+                        const fecha = new Date(mensaje.create_time);
                         celdaFecha.textContent = fecha.toLocaleDateString() + ", " + fecha.toLocaleTimeString();
 
                         const celdaRol = document.createElement("td");
