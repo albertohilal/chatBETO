@@ -35,6 +35,12 @@
             fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
+                    if (!Array.isArray(data)) {
+                        console.error("Respuesta inesperada del servidor:", data);
+                        document.getElementById("resultados").innerHTML = `<tr><td colspan="4">Error al procesar la respuesta</td></tr>`;
+                        return;
+                    }
+
                     const resultados = document.getElementById("resultados");
                     resultados.innerHTML = "";
 
@@ -55,35 +61,52 @@
                         const celdaMensaje = document.createElement("td");
 
                         try {
-                            const contenido = JSON.parse(mensaje.message_content);
-                            if (contenido.content_type === "image_asset_pointer") {
-                                const fileID = contenido.asset_pointer.replace("file-service://", "");
-                                const posiblesExtensiones = ["png", "jpg", "jpeg", "gif", "webp"];
-                                let imagenEncontrada = false;
+                            let contenido = mensaje.message_content;
+                            if (typeof contenido === "string") {
+                                contenido = JSON.parse(contenido);
+                            }
 
-                                posiblesExtensiones.forEach(ext => {
-                                    const imageUrl = `uploads/${fileID}-image.${ext}`;
-                                    fetch(imageUrl, { method: "HEAD" }) 
-                                        .then(res => {
-                                            if (res.ok && !imagenEncontrada) {
-                                                celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen" onclick="abrirModal('${imageUrl}')">`;
-                                                imagenEncontrada = true;
-                                            }
-                                        })
-                                        .catch(() => {});
-                                });
-
-                                // Si no se encuentra la imagen, mostrar imagen por defecto
-                                setTimeout(() => {
-                                    if (!imagenEncontrada) {
-                                        celdaMensaje.innerHTML = `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
+                            let imagenesHTML = "";
+                            if (Array.isArray(contenido)) {
+                                contenido.forEach(item => {
+                                    if (typeof item === "string") {
+                                        item = JSON.parse(item);
                                     }
-                                }, 500);
+                                    if (item.content_type === "image_asset_pointer") {
+                                        const fileID = item.asset_pointer.replace("file-service://", "");
+                                        const extensiones = ["png", "jpg"]; // Probar con ambas extensiones
+                                        let imagenEncontrada = false;
 
+                                        extensiones.forEach(ext => {
+                                            if (!imagenEncontrada) {
+                                                const imageUrl = `uploads/${fileID}-image.${ext}`;
+                                                fetch(imageUrl, { method: "HEAD" })
+                                                    .then(res => {
+                                                        if (res.ok) {
+                                                            celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen" onclick="abrirModal('${imageUrl}')">`;
+                                                            imagenEncontrada = true;
+                                                        }
+                                                    })
+                                                    .catch(() => {});
+                                            }
+                                        });
+
+                                        setTimeout(() => {
+                                            if (!imagenEncontrada) {
+                                                celdaMensaje.innerHTML = `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
+                                            }
+                                        }, 500);
+                                    }
+                                });
+                            } else if (contenido.content_type === "image_asset_pointer") {
+                                const fileID = contenido.asset_pointer.replace("file-service://", "");
+                                const imageUrl = `uploads/${fileID}-image.png`;
+                                celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen" onclick="abrirModal('${imageUrl}')">`;
                             } else {
                                 celdaMensaje.textContent = mensaje.message_content;
                             }
                         } catch (e) {
+                            console.error("Error procesando message_content:", e);
                             celdaMensaje.textContent = mensaje.message_content;
                         }
 
@@ -94,7 +117,10 @@
                         resultados.appendChild(fila);
                     });
                 })
-                .catch(error => console.error("Error:", error));
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById("resultados").innerHTML = `<tr><td colspan="4">Error al buscar mensajes</td></tr>`;
+                });
         }
 
         function abrirModal(imagenSrc) {
