@@ -2,6 +2,7 @@ import json
 import os
 import pymysql
 import zipfile
+from datetime import datetime
 
 # Configuración de la base de datos
 DB_CONFIG = {
@@ -15,7 +16,6 @@ DB_CONFIG = {
 ZIP_FILE = "conversations.zip"
 EXTRACT_PATH = "./extracted"
 
-
 def connect_to_db():
     """Conecta a la base de datos MySQL"""
     try:
@@ -25,25 +25,6 @@ def connect_to_db():
     except pymysql.MySQLError as e:
         print(f"[ERROR] No se pudo conectar a MySQL: {e}")
         return None
-
-
-def drop_tables():
-    """Elimina las tablas si existen."""
-    connection = connect_to_db()
-    if connection:
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-                cursor.execute("DROP TABLE IF EXISTS messages;")
-                cursor.execute("DROP TABLE IF EXISTS conversations;")
-                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-            connection.commit()
-            print("[OK] Tablas eliminadas correctamente.")
-        except pymysql.MySQLError as e:
-            print(f"[ERROR] No se pudieron eliminar las tablas: {e}")
-        finally:
-            connection.close()
-
 
 def create_tables():
     """Crea las nuevas tablas conversations y messages."""
@@ -65,7 +46,7 @@ def create_tables():
                         role VARCHAR(50),
                         content TEXT,
                         parts TEXT,
-                        create_time FLOAT,
+                        create_time DATETIME,
                         parent VARCHAR(255),
                         children TEXT,
                         FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id)
@@ -77,7 +58,6 @@ def create_tables():
             print(f"[ERROR] No se pudieron crear las tablas: {e}")
         finally:
             connection.close()
-
 
 def insert_conversation(conversation_id, title, messages):
     """Inserta una conversación y sus mensajes en la base de datos."""
@@ -100,11 +80,12 @@ def insert_conversation(conversation_id, title, messages):
                     role = message.get("author", {}).get("role", "unknown")
                     parts_list = message.get("content", {}).get("parts", [])
                     
-                    # Convertir cada parte a string si es un diccionario
                     parts = [json.dumps(part) if isinstance(part, dict) else str(part) for part in parts_list]
-                    content = " ".join(parts)  # Unir en una sola cadena legible
+                    content = " ".join(parts)  
                     
                     create_time = message.get("create_time", 0) or 0
+                    formatted_time = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d %H:%M:%S')  # Conversión
+                    
                     parent = msg_data.get("parent", None)
                     children = json.dumps(msg_data.get("children", []) or [])
                     
@@ -113,7 +94,7 @@ def insert_conversation(conversation_id, title, messages):
                         INSERT INTO messages (id, conversation_id, role, content, parts, create_time, parent, children)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                         """,
-                        (msg_id, conversation_id, role, content, json.dumps(parts), create_time, parent, children)
+                        (msg_id, conversation_id, role, content, json.dumps(parts), formatted_time, parent, children)
                     )
             connection.commit()
             print(f"[OK] Conversación '{title}' y sus mensajes insertados.")
@@ -121,7 +102,6 @@ def insert_conversation(conversation_id, title, messages):
             print(f"[ERROR] No se pudo insertar la conversación: {e}")
         finally:
             connection.close()
-
 
 def process_conversations():
     """Carga y procesa el archivo JSON de conversaciones."""
@@ -146,14 +126,11 @@ def process_conversations():
     except Exception as e:
         print(f"[ERROR] No se pudo procesar el JSON: {e}")
 
-
 def main():
     """Función principal"""
-    drop_tables()
     create_tables()
     process_conversations()
     print("[OK] Datos procesados y almacenados correctamente.")
-
 
 if __name__ == "__main__":
     main()
