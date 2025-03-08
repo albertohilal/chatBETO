@@ -79,17 +79,10 @@ def insert_conversation(conversation_id, title, messages):
                     message = msg_data.get("message", {}) or {}
                     role = message.get("author", {}).get("role", "unknown")
                     parts_list = message.get("content", {}).get("parts", [])
-
-                    # ✅ Filtrar partes vacías y limpiar espacios
-                    parts = [json.dumps(part, ensure_ascii=False) if isinstance(part, dict) else str(part).strip() for part in parts_list]
-
-                    # ✅ Unir partes y eliminar contenido vacío
-                    content = " ".join(parts).strip()
-
-                    # ✅ Si el mensaje está vacío, no se inserta
-                    if not content:
-                        print(f"[WARNING] Mensaje vacío en {msg_id}, no se insertará.")
-                        continue
+                    
+                    # ✅ Decodificar caracteres Unicode correctamente
+                    parts = [json.dumps(part, ensure_ascii=False) if isinstance(part, dict) else str(part) for part in parts_list]
+                    content = " ".join(parts)  
 
                     create_time = message.get("create_time", 0) or 0
                     formatted_time = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d %H:%M:%S')  # Conversión
