@@ -21,9 +21,9 @@ th {
     background-color: blue;
     color: white;
 }
-
+/*
 .user { background-color: #d9ebff; }
-.assistant { background-color: #fff3c4; }
+.assistant { background-color: #fff3c4; }*/
 
 img {
     max-width: 300px;
@@ -61,3 +61,36 @@ img {
     font-weight: bold;
     cursor: pointer;
 }
+
+.markdown-content {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Para respetar los saltos de línea */
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.markdown-content code {
+    /*background-color: #eee;*/
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+.markdown-content pre {
+    background: #282c34;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+pre, code {
+    background-color: #2d2d2d; /* Color de fondo más oscuro */
+    color: #f8f8f2; /* Texto en color claro para buen contraste */
+    font-family: "Courier New", Courier, monospace;
+    padding: 10px;
+    border-radius: 5px;
+    display: block;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Mensajes en Chat</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
 </head>
 <body>
 
@@ -24,6 +25,7 @@
         <tbody id="resultados"></tbody>
     </table>
 
+    <!-- Modal para ver imágenes en grande -->
     <div id="modal" class="modal">
         <span class="close" onclick="cerrarModal()">&times;</span>
         <img id="modal-img" class="modal-content">
@@ -59,56 +61,7 @@
                         celdaRol.textContent = mensaje.message_role;
 
                         const celdaMensaje = document.createElement("td");
-
-                        try {
-                            let contenido = mensaje.message_content;
-                            if (typeof contenido === "string") {
-                                contenido = JSON.parse(contenido);
-                            }
-
-                            let imagenesHTML = "";
-                            if (Array.isArray(contenido)) {
-                                contenido.forEach(item => {
-                                    if (typeof item === "string") {
-                                        item = JSON.parse(item);
-                                    }
-                                    if (item.content_type === "image_asset_pointer") {
-                                        const fileID = item.asset_pointer.replace("file-service://", "");
-                                        const extensiones = ["png", "jpg"]; // Probar con ambas extensiones
-                                        let imagenEncontrada = false;
-
-                                        extensiones.forEach(ext => {
-                                            if (!imagenEncontrada) {
-                                                const imageUrl = `uploads/${fileID}-image.${ext}`;
-                                                fetch(imageUrl, { method: "HEAD" })
-                                                    .then(res => {
-                                                        if (res.ok) {
-                                                            celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen" onclick="abrirModal('${imageUrl}')">`;
-                                                            imagenEncontrada = true;
-                                                        }
-                                                    })
-                                                    .catch(() => {});
-                                            }
-                                        });
-
-                                        setTimeout(() => {
-                                            if (!imagenEncontrada) {
-                                                celdaMensaje.innerHTML = `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
-                                            }
-                                        }, 500);
-                                    }
-                                });
-                            } else if (contenido.content_type === "image_asset_pointer") {
-                                const fileID = contenido.asset_pointer.replace("file-service://", "");
-                                const imageUrl = `uploads/${fileID}-image.png`;
-                                celdaMensaje.innerHTML = `<img src="${imageUrl}" alt="Imagen" onclick="abrirModal('${imageUrl}')">`;
-                            } else {
-                                celdaMensaje.textContent = mensaje.message_content;
-                            }
-                        } catch (e) {
-                            console.error("Error procesando message_content:", e);
-                            celdaMensaje.textContent = mensaje.message_content;
-                        }
+                        celdaMensaje.innerHTML = procesarMensaje(mensaje.message_content);
 
                         fila.appendChild(celdaTitulo);
                         fila.appendChild(celdaFecha);
@@ -121,6 +74,54 @@
                     console.error("Error:", error);
                     document.getElementById("resultados").innerHTML = `<tr><td colspan="4">Error al buscar mensajes</td></tr>`;
                 });
+        }
+
+        function procesarMensaje(contenido) {
+            try {
+                if (typeof contenido === "string") {
+                    contenido = JSON.parse(contenido);
+                }
+
+                let resultado = "";
+
+                if (Array.isArray(contenido)) {
+                    contenido.forEach(item => {
+                        if (typeof item === "string") {
+                            try {
+                                item = JSON.parse(item);
+                            } catch (e) {}
+                        }
+
+                        if (item.content_type === "image_asset_pointer") {
+                            resultado += generarHTMLImagen(item.asset_pointer);
+                        } else if (typeof item === "string") {
+                            resultado += `<div class="markdown-content">${marked.parse(item)}</div>`;
+                        }
+                    });
+                } else if (contenido.content_type === "image_asset_pointer") {
+                    resultado = generarHTMLImagen(contenido.asset_pointer);
+                } else {
+                    resultado = `<div class="markdown-content">${marked.parse(contenido)}</div>`;
+                }
+
+                return resultado;
+            } catch (e) {
+                console.error("Error procesando message_content:", e);
+                return `<p>${contenido}</p>`;
+            }
+        }
+
+        function generarHTMLImagen(assetPointer) {
+            const fileID = assetPointer.replace("file-service://", "");
+            const extensiones = ["png", "jpg", "jpeg", "gif"];
+            let imagenHTML = "";
+
+            extensiones.forEach(ext => {
+                const imageUrl = `uploads/${fileID}-image.${ext}`;
+                imagenHTML += `<img src="${imageUrl}" alt="Imagen" class="miniatura" onclick="abrirModal('${imageUrl}')"> `;
+            });
+
+            return imagenHTML || `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
         }
 
         function abrirModal(imagenSrc) {
