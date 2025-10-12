@@ -1,0 +1,67 @@
+# Archivos de configuración con credenciales sensibles
+.env
+.env.local
+.env.production
+.env.development
+
+# Archivos de log
+*.log
+error_log.txt
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Directorios de cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de backup
+*.bak
+*.backup
+*~
+
+# Directorios auxiliares - mantener carpeta pero excluir contenido
+Auxiliar/*
+!Auxiliar/.gitkeep
+auxiliar/*
+!auxiliar/.gitkeep
+
+# Archivos de datos sensibles - CONVERSACIONES PRIVADAS  
+extracted/
+# Excluir completamente todo el contenido de extracted/
+
+# Archivos multimedia pesados (imágenes, videos, etc.)
+extracted/chatBeto-Data/media/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.webp
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+
+# Archivos de backup de base de datos
+*.sql
+extracted/chatBeto-Data/mysql backup/
+
+# Node modules (si usas JavaScript/Node.js en el futuro)
+node_modules/
+
+# Composer (si usas dependencias PHP)
+vendor/

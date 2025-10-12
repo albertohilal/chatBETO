@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Mensajes en Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <h1>Buscar Mensajes en Chat</h1>
+    <input type="text" id="query" placeholder="Buscar..." onkeypress="if(event.key==='Enter') buscarMensajes()">
+    <button onclick="buscarMensajes()">Buscar</button>
+    <button onclick="mostrarTodo()">Ver Todo</button>
+
+    <div id="loading" style="display:none; text-align:center; padding:20px;">
+        🔄 Buscando...
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Fecha</th>
+                <th>Rol</th>
+                <th>Mensaje</th>
+            </tr>
+        </thead>
+        <tbody id="resultados"></tbody>
+    </table>
+
+    <!-- Modal para ver imágenes en grande -->
+    <div id="modal" class="modal">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <img id="modal-img" class="modal-content">
+    </div>
+
+    <script>
+        function buscarMensajes() {
+            const query = document.getElementById("query").value;
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("resultados").innerHTML = "";
+            
+            fetch(`buscar_chat.php?query=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    
+                    if (!Array.isArray(data)) {
+                        console.error("Respuesta inesperada del servidor:", data);
+                        document.getElementById("resultados").innerHTML = `<tr><td colspan="4">Error al procesar la respuesta</td></tr>`;
+                        return;
+                    }
+
+                    const resultados = document.getElementById("resultados");
+                    resultados.innerHTML = "";
+
+                    if (data.length === 0) {
+                        resultados.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px;">No se encontraron resultados para "${query}"</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach(mensaje => {
+                        const fila = document.createElement("tr");
+                        fila.classList.add(mensaje.message_role === "user" ? "user" : "assistant");
+
+                        const celdaTitulo = document.createElement("td");
+                        celdaTitulo.textContent = mensaje.title;
+                        
+                        const celdaFecha = document.createElement("td");
+                        const fecha = new Date(mensaje.create_time);
+                        celdaFecha.textContent = fecha.toLocaleDateString() + ", " + fecha.toLocaleTimeString();
+
+                        const celdaRol = document.createElement("td");
+                        celdaRol.textContent = mensaje.message_role;
+
+                        const celdaMensaje = document.createElement("td");
+                        celdaMensaje.innerHTML = procesarMensaje(mensaje.message_content);
+
+                        fila.appendChild(celdaTitulo);
+                        fila.appendChild(celdaFecha);
+                        fila.appendChild(celdaRol);
+                        fila.appendChild(celdaMensaje);
+                        resultados.appendChild(fila);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById("resultados").innerHTML = `<tr><td colspan="4">Error al buscar mensajes: ${error.message}</td></tr>`;
+                })
+                .finally(() => {
+                    document.getElementById("loading").style.display = "none";
+                });
+        }
+
+        function mostrarTodo() {
+            document.getElementById("query").value = "";
+            buscarMensajes();
+        }
+
+        function procesarMensaje(contenido) {
+            try {
+                if (typeof contenido === "string") {
+                    // Si es un string que parece JSON array, parsearlo
+                    if (contenido.startsWith("[") && contenido.endsWith("]")) {
+                        const parsed = JSON.parse(contenido);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            contenido = parsed[0]; // Tomar el primer elemento
+                        }
+                    }
+                }
+
+                let resultado = "";
+
+                if (Array.isArray(contenido)) {
+                    contenido.forEach(item => {
+                        if (typeof item === "string") {
+                            try {
+                                item = JSON.parse(item);
+                            } catch (e) {
+                                // Si no es JSON válido, usar el string tal como está
+                            }
+                        }
+
+                        if (item && item.content_type === "image_asset_pointer") {
+                            resultado += generarHTMLImagen(item.asset_pointer);
+                        } else if (typeof item === "string") {
+                            resultado += `<div class="markdown-content">${marked.parse(item)}</div>`;
+                        }
+                    });
+                } else if (contenido && contenido.content_type === "image_asset_pointer") {
+                    resultado = generarHTMLImagen(contenido.asset_pointer);
+                } else if (typeof contenido === "string") {
+                    resultado = `<div class="markdown-content">${marked.parse(contenido)}</div>`;
+                } else {
+                    resultado = `<p>${JSON.stringify(contenido)}</p>`;
+                }
+
+                return resultado;
+            } catch (e) {
+                console.error("Error procesando message_content:", e);
+                return `<p>${contenido}</p>`;
+            }
+        }
+
+        function generarHTMLImagen(assetPointer) {
+            const fileID = assetPointer.replace("file-service://", "");
+            const extensiones = ["png", "jpg", "jpeg", "gif"];
+            let imagenHTML = "";
+
+            extensiones.forEach(ext => {
+                const imageUrl = `uploads/${fileID}-image.${ext}`;
+                imagenHTML += `<img src="${imageUrl}" alt="Imagen" class="miniatura" onclick="abrirModal('${imageUrl}')"> `;
+            });
+
+            return imagenHTML || `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
+        }
+
+        function abrirModal(imagenSrc) {
+            const modal = document.getElementById("modal");
+            const modalImg = document.getElementById("modal-img");
+            modal.style.display = "block";
+            modalImg.src = imagenSrc;
+        }
+
+        function cerrarModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        // Cargar algunos mensajes al iniciar
+        window.onload = function() {
+            document.getElementById("query").value = "ChatGPT";
+            buscarMensajes();
+        };
+    </script>
+
+</body>
+</html>
