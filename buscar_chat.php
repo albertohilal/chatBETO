@@ -51,7 +51,7 @@ try {
     $sql .= " AND msg.role IN ('user', 'assistant')
               AND msg.parts IS NOT NULL
               AND msg.parts <> ''
-              ORDER BY msg.create_time DESC, conv.conversation_id
+              ORDER BY conv.create_time DESC, msg.create_time ASC
               LIMIT 100";
     
     $stmt = $conn->prepare($sql);
