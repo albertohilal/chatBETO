@@ -1,0 +1,45 @@
+# Archivos de configuración con credenciales sensibles
+.env
+.env.local
+.env.production
+.env.development
+
+# Archivos de log
+*.log
+error_log.txt
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Directorios de cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de backup
+*.bak
+*.backup
+*~
+
+# Directorios auxiliares y de trabajo
+Auxiliar/
+auxiliar/
+
+# Archivos de datos sensibles (opcional, dependiendo del caso)
+# extracted/conversations.json
+
+# Node modules (si usas JavaScript/Node.js en el futuro)
+node_modules/
+
+# Composer (si usas dependencias PHP)
+vendor/
