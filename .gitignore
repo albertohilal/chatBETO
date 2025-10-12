@@ -31,12 +31,34 @@ Thumbs.db
 *.backup
 *~
 
-# Directorios auxiliares y de trabajo
-Auxiliar/
-auxiliar/
+# Directorios auxiliares - mantener carpeta pero excluir contenido
+Auxiliar/*
+!Auxiliar/.gitkeep
+auxiliar/*
+!auxiliar/.gitkeep
 
-# Archivos de datos sensibles (opcional, dependiendo del caso)
-# extracted/conversations.json
+# Archivos de datos sensibles - CONVERSACIONES PRIVADAS  
+extracted/
+# Excluir completamente todo el contenido de extracted/
+
+# Archivos multimedia pesados (imágenes, videos, etc.)
+extracted/chatBeto-Data/media/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.webp
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+
+# Archivos de backup de base de datos
+*.sql
+extracted/chatBeto-Data/mysql backup/
 
 # Node modules (si usas JavaScript/Node.js en el futuro)
 node_modules/
