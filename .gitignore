@@ -43,6 +43,8 @@ extracted/
 
 # Archivos multimedia pesados (imágenes, videos, etc.)
 extracted/chatBeto-Data/media/
+extracted/chatBeto-Data/media.zip
+extracted/chatBeto-Data/Otros/
 *.jpg
 *.jpeg
 *.png
@@ -55,10 +57,15 @@ extracted/chatBeto-Data/media/
 *.mov
 *.wmv
 *.flv
+*.zip
 
 # Archivos de backup de base de datos
 *.sql
 extracted/chatBeto-Data/mysql backup/
+extracted/chatBeto-Data/Mysql/
+
+# Archivo principal de conversaciones (muy grande)
+extracted/conversations.json
 
 # Node modules (si usas JavaScript/Node.js en el futuro)
 node_modules/
