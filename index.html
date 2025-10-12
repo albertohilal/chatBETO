@@ -12,7 +12,7 @@
     <h1>🔍 Buscar Mensajes en Chat</h1>
     
     <div style="text-align: center; margin: 20px 0;">
-        <a href="index_improved.html" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 0 10px;">🔍 Búsqueda</a>
+        <a href="index.html" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 0 10px;">🔍 Búsqueda</a>
         <a href="estadisticas.html" style="display: inline-block; padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; margin: 0 10px;">📊 Estadísticas</a>
     </div>
     
@@ -75,7 +75,7 @@
             document.getElementById("resultados").innerHTML = "";
             
             // Construir URL con parámetros
-            let url = 'buscar_chat_with_filters.php';
+            let url = 'buscar_chat.php';
             let params = new URLSearchParams();
             
             if (query.trim()) {
