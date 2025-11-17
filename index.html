@@ -2,23 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-wid                    if (data.length === 0) {
-                        const searchTerm = query || 'el proyecto seleccionado';
-                        resultados.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No se encontraron resultados para "${searchTerm}"</td></tr>`;
-                        return;
-                    }
-
-                    data.forEach(mensaje => {
-                        const fila = document.createElement("tr");
-                        fila.classList.add(mensaje.message_role === "user" ? "user" : "assistant");
-
-                        const celdaProyecto = document.createElement("td");
-                        celdaProyecto.textContent = mensaje.project_name || 'Sin proyecto';
-                        celdaProyecto.style.fontWeight = '500';
-                        celdaProyecto.style.color = '#007bff';
-
-                        const celdaTitulo = document.createElement("td");
-                        celdaTitulo.textContent = mensaje.title;scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Mensajes en Chat</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
@@ -38,8 +22,20 @@
                 <option value="">🗂️ Todos los proyectos</option>
             </select>
         </div>
+        
+        <div class="search-type-selector" style="margin-bottom: 15px; text-align: center;">
+            <label style="margin-right: 20px;">
+                <input type="radio" name="search-type" value="conversations" checked> 
+                💬 Buscar en títulos de conversaciones
+            </label>
+            <label>
+                <input type="radio" name="search-type" value="messages"> 
+                📝 Buscar en contenido de mensajes
+            </label>
+        </div>
+        
         <div class="search-row">
-            <input type="text" id="query" placeholder="Buscar en conversaciones...">
+            <input type="text" id="query" placeholder="Escribe tu búsqueda aquí...">
             <button onclick="buscarMensajes()">🔍 Buscar</button>
             <button onclick="mostrarTodo()">📋 Mostrar Todo</button>
         </div>
@@ -51,7 +47,7 @@
         <thead>
             <tr>
                 <th>Proyecto</th>
-                <th>Título</th>
+                <th>Conversación</th>
                 <th>Fecha</th>
                 <th>Rol</th>
                 <th>Mensaje</th>
@@ -90,6 +86,7 @@
         function buscarMensajes() {
             const query = document.getElementById("query").value;
             const projectId = document.getElementById("project-filter").value;
+            const searchType = document.querySelector('input[name="search-type"]:checked').value;
             
             document.getElementById("loading").style.display = "block";
             document.getElementById("resultados").innerHTML = "";
@@ -100,6 +97,7 @@
             
             if (query.trim()) {
                 params.append('query', query);
+                params.append('search_type', searchType);
             }
             if (projectId) {
                 params.append('project_id', projectId);
@@ -138,9 +136,14 @@
                         return;
                     }
 
-                    data.forEach(mensaje => {
+                    results.forEach(mensaje => {
                         const fila = document.createElement("tr");
                         fila.classList.add(mensaje.message_role === "user" ? "user" : "assistant");
+
+                        const celdaProyecto = document.createElement("td");
+                        celdaProyecto.textContent = mensaje.project_name || 'Sin proyecto';
+                        celdaProyecto.style.fontWeight = '500';
+                        celdaProyecto.style.color = '#007bff';
 
                         const celdaTitulo = document.createElement("td");
                         celdaTitulo.textContent = mensaje.title;
@@ -176,7 +179,8 @@
             document.getElementById("loading").style.display = "block";
             document.getElementById("resultados").innerHTML = "";
             
-            fetch(`buscar_chat.php?query=`)
+            // Usar búsqueda de conversaciones en lugar de mensajes para "Mostrar Todo"
+            fetch(`buscar_chat.php?query=&search_type=conversations`)
                 .then(response => {
                     document.getElementById("loading").style.display = "none";
                     if (!response.ok) {
@@ -185,9 +189,10 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Showing all data:", data);
+                    console.log("Showing all conversations:", data);
                     
-                    if (!Array.isArray(data)) {
+                    // Verificar si la respuesta tiene la estructura correcta
+                    if (!data.success || !Array.isArray(data.results)) {
                         console.error("Respuesta inesperada del servidor:", data);
                         document.getElementById("resultados").innerHTML = `<tr><td colspan="5">Error al procesar la respuesta</td></tr>`;
                         return;
@@ -196,14 +201,14 @@
                     const resultados = document.getElementById("resultados");
                     resultados.innerHTML = "";
 
-                    if (data.length === 0) {
-                        resultados.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No hay mensajes en la base de datos</td></tr>`;
+                    if (data.results.length === 0) {
+                        resultados.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No hay conversaciones en la base de datos</td></tr>`;
                         return;
                     }
 
-                    data.forEach(mensaje => {
+                    data.results.forEach(mensaje => {
                         const fila = document.createElement("tr");
-                        fila.classList.add(mensaje.message_role === "user" ? "user" : "assistant");
+                        fila.classList.add("conversation");
 
                         const celdaProyecto = document.createElement("td");
                         celdaProyecto.textContent = mensaje.project_name || 'Sin proyecto';
@@ -211,7 +216,7 @@
                         celdaProyecto.style.color = '#007bff';
 
                         const celdaTitulo = document.createElement("td");
-                        celdaTitulo.textContent = mensaje.title;
+                        celdaTitulo.textContent = mensaje.title || 'Sin título';
                         
                         const celdaFecha = document.createElement("td");
                         const fecha = new Date(mensaje.create_time);
@@ -239,50 +244,33 @@
         }
 
         function procesarMensaje(contenido) {
+            if (!contenido) return "";
+            
             try {
-                if (typeof contenido === "string") {
-                    contenido = JSON.parse(contenido);
-                }
-
-                let resultado = "";
-
-                if (Array.isArray(contenido)) {
-                    contenido.forEach(item => {
-                        if (typeof item === "string") {
-                            try {
-                                item = JSON.parse(item);
-                            } catch (e) {}
-                        }
-
-                        if (item.content_type === "image_asset_pointer") {
-                            resultado += generarHTMLImagen(item.asset_pointer);
-                        } else if (typeof item === "string") {
-                            resultado += `<div class="markdown-content">${marked.parse(item)}</div>`;
+                const parts = JSON.parse(contenido);
+                let html = "";
+                
+                if (Array.isArray(parts)) {
+                    parts.forEach(part => {
+                        if (typeof part === 'string') {
+                            html += marked.parse(part);
                         }
                     });
-                } else if (contenido.content_type === "image_asset_pointer") {
-                    resultado = generarHTMLImagen(contenido.asset_pointer);
                 } else {
-                    resultado = `<div class="markdown-content">${marked.parse(contenido)}</div>`;
+                    html = marked.parse(contenido);
                 }
-
-                return resultado;
+                
+                return html;
             } catch (e) {
-                console.error("Error procesando message_content:", e);
-                return `<p>${contenido}</p>`;
+                return marked.parse(contenido);
             }
         }
 
-        function generarHTMLImagen(assetPointer) {
-            const fileID = assetPointer.replace("file-service://", "");
-            const extensiones = ["png", "jpg", "jpeg", "gif"];
-            let imagenHTML = "";
-
-            extensiones.forEach(ext => {
-                const imageUrl = `uploads/${fileID}-image.${ext}`;
-                imagenHTML += `<img src="${imageUrl}" alt="Imagen" class="miniatura" onclick="abrirModal('${imageUrl}')"> `;
-            });
-
+        function procesarImagen(imagenSrc) {
+            if (!imagenSrc) return "";
+            
+            const imagenHTML = `<img src="${imagenSrc}" alt="Imagen" style="max-width: 200px; cursor: pointer;" onclick="abrirModal('${imagenSrc}')">`;
+            
             return imagenHTML || `<img src="uploads/imagen_no_disponible.png" alt="Imagen no encontrada">`;
         }
 
@@ -297,6 +285,18 @@
             document.getElementById("modal").style.display = "none";
         }
 
+        // Cambiar placeholder según el tipo de búsqueda
+        function updatePlaceholder() {
+            const searchType = document.querySelector('input[name="search-type"]:checked').value;
+            const queryInput = document.getElementById("query");
+            
+            if (searchType === 'conversations') {
+                queryInput.placeholder = "Buscar en títulos de conversaciones...";
+            } else {
+                queryInput.placeholder = "Buscar en contenido de mensajes...";
+            }
+        }
+
         // Permitir búsqueda con Enter
         document.getElementById("query").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
@@ -308,6 +308,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             cargarProyectos();
             mostrarTodo();
+            updatePlaceholder();
+            
+            // Agregar listeners a los radio buttons
+            document.querySelectorAll('input[name="search-type"]').forEach(radio => {
+                radio.addEventListener('change', updatePlaceholder);
+            });
         });
     </script>
 

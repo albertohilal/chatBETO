@@ -3,6 +3,8 @@
 .env.local
 .env.production
 .env.development
+db_config.json
+openai_key.txt
 
 # Archivos de log
 *.log
@@ -11,6 +13,15 @@ error_log.txt
 # Archivos temporales
 *.tmp
 *.temp
+temp_*/
+
+# Directorios de entornos virtuales
+.venv*/
+node_modules/
+
+# Archivos de backup
+backup_*.sql
+*.backup
 
 # Directorios de cache
 __pycache__/
