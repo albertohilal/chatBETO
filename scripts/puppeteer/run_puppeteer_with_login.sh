@@ -1,0 +1,56 @@
+#!/bin/bash
+
+echo "🚀 PREPARACIÓN PARA PUPPETEER CHATGPT"
+echo "====================================="
+echo ""
+echo "📋 PASOS A SEGUIR:"
+echo ""
+echo "1️⃣  ABRIR CHROME NORMAL:"
+echo "   - Abre Google Chrome desde el menú de aplicaciones"
+echo "   - NO desde terminal, usa el navegador normal"
+echo ""
+echo "2️⃣  HACER LOGIN EN CHATGPT:"
+echo "   - Ve a https://chatgpt.com/"
+echo "   - Selecciona la cuenta de Google con ChatGPT de pago"
+echo "   - Haz login completamente"
+echo "   - Verifica que puedes ver tus conversaciones"
+echo ""
+echo "3️⃣  VERIFICAR QUE ESTÁS LOGUEADO:"
+echo "   - Debes ver el sidebar con conversaciones"
+echo "   - Debes ver tus proyectos (si los tienes)"
+echo "   - La URL debe ser https://chatgpt.com/"
+echo ""
+echo "4️⃣  CERRAR CHROME:"
+echo "   - Cierra completamente Chrome (todas las ventanas)"
+echo "   - Esto guarda la sesión en el perfil"
+echo "   - IMPORTANTE: Asegúrate de que NO hay Chrome corriendo"
+echo ""
+echo "5️⃣  VERIFICAR CHROME CERRADO:"
+echo "   - Ejecuta: pkill chrome"
+echo "   - O verifica con: ps aux | grep chrome"
+echo ""
+echo "6️⃣  EJECUTAR PUPPETEER:"
+echo "   - Ejecuta: npm test"
+echo "   - Puppeteer usará la sesión guardada"
+echo ""
+echo "⚠️  IMPORTANTE:"
+echo "   - NO hagas login desde Puppeteer"
+echo "   - La sesión debe estar guardada ANTES de ejecutar el script"
+echo "   - Si hay error, repite desde el paso 1"
+echo ""
+echo "🔄 ¿Quieres ejecutar el script ahora? (después de hacer login manual)"
+echo "   Presiona Enter cuando hayas completado todos los pasos..."
+
+read -p ""
+
+echo ""
+echo "� Cerrando cualquier instancia de Chrome..."
+pkill -f chrome || true
+sleep 2
+
+echo ""
+echo "�🚀 Ejecutando Puppeteer con sesión guardada..."
+echo ""
+
+# Ejecutar el script de Puppeteer
+node puppeteer_test.js

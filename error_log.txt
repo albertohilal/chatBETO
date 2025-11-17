@@ -1,4 +1,0 @@
-[06-Mar-2025 11:30:57 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Call to undefined function connect_to_db() in /home/iunaorg/public_html/chatBeto/buscar_chat.php:12
-Stack trace:
-#0 {main}
-  thrown in /home/iunaorg/public_html/chatBeto/buscar_chat.php on line 12

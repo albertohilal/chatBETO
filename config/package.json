@@ -1,0 +1,21 @@
+{
+  "name": "chatbeto-puppeteer-scraper",
+  "version": "1.0.0",
+  "description": "Puppeteer scraper para mapear proyectos de ChatGPT con gizmo_ids reales",
+  "main": "puppeteer-scraper.js",
+  "type": "module",
+  "scripts": {
+    "start": "node puppeteer-scraper.js",
+    "scrape": "node puppeteer-scraper.js",
+    "map": "node mapear-proyectos.js",
+    "install-deps": "npm install",
+    "test": "node puppeteer-scraper.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.5.0",
+    "mysql2": "^3.6.5"
+  },
+  "keywords": ["puppeteer", "chatgpt", "scraping", "mysql"],
+  "author": "ChatBETO Project",
+  "license": "MIT"
+}

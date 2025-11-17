@@ -1,0 +1,800 @@
+{
+  "total_projects": 85,
+  "projects_with_gizmo": 84,
+  "conversations_without_gizmo": 808,
+  "projects_to_create": [
+    {
+      "gizmo_id": "g-p-689a08ad26488191965825aff4f517fe",
+      "suggested_name": "Resales Filtros Diagnóstico",
+      "conversation_count": 85,
+      "sample_titles": [
+        "Agregar El Madroñal tarjeta",
+        "77 Solución problema Subarea",
+        "76 Paginación en PHP"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67d196a64e248191aad263e5c35a54f1",
+      "suggested_name": "Gmb Análisis Whatsapp",
+      "conversation_count": 83,
+      "sample_titles": [
+        "Crédito PYMES BAPRO seguimiento",
+        "Diferencias whatsapp-massive-sender wappflow-n8n",
+        "Insertar contenido documento"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-680ce62f83148191b2dca207e85e0e99",
+      "suggested_name": "Chatgpt Archivos Problema",
+      "conversation_count": 35,
+      "sample_titles": [
+        "Alternativas ChatGPT sin límites",
+        "Formatear JSON",
+        "Problemas leyendo archivos"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6786e891879c8191b6af995c83ac4f2a",
+      "suggested_name": "Convocatoria Asamblea Sindicato",
+      "conversation_count": 32,
+      "sample_titles": [
+        "Análisis conversación chat",
+        "Convocatoria Asamblea Virtual UNA",
+        "Noticia sobre el Nieto 140"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67eec68c720c819184746f3db3295a0e",
+      "suggested_name": "Análisis Imagen Artística",
+      "conversation_count": 30,
+      "sample_titles": [
+        "Análisis de imagen artística",
+        "Daniela Caro",
+        "Paleta armónica análisis"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67eba26c610881918650a47d2f907173",
+      "suggested_name": "Móvil P5.Js Comunicado",
+      "conversation_count": 28,
+      "sample_titles": [
+        "Comunicado a estudiantes",
+        "Análisis de mail",
+        "Cambio de dinámica móvil"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-681b4c1d7c50819193aa3bbebfac1669",
+      "suggested_name": "Definir Plano Medio",
+      "conversation_count": 27,
+      "sample_titles": [
+        "Definir plano medio",
+        "29 Elementos de la imagen",
+        "28 El Encuadre"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-678aca4bde1081918b303cfa0dbe0949",
+      "suggested_name": "Code Github Análisis",
+      "conversation_count": 24,
+      "sample_titles": [
+        "Análisis de seguridad 2FA",
+        "VS Code y GitHub",
+        "Guiame por favor"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67bb710a9e348191bde6345e3c43f16d",
+      "suggested_name": "Xubuntu Montar Google",
+      "conversation_count": 24,
+      "sample_titles": [
+        "Montar Google Drive Xubuntu",
+        "Evitar apagado pantalla",
+        "Ver redes WiFi disponibles"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68439d31198c8191affba847e042855d",
+      "suggested_name": "Whatsapp Envío Masivo",
+      "conversation_count": 24,
+      "sample_titles": [
+        "Error servidor Node.js",
+        "whatsapp-massive-sender-01",
+        "Captación Clientes Guía-3"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67f27d9d988c8191a3aa0102d6ccf0f0",
+      "suggested_name": "Moodle Consulta Estudiante",
+      "conversation_count": 19,
+      "sample_titles": [
+        "Consulta cursos estudiante Moodle",
+        "Tutorial Foro Moodle",
+        "Consulta SQL TP foros"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67aa7234a07c8191b7e92a78f9aef26b",
+      "suggested_name": "Fiverr Jhane Respuesta",
+      "conversation_count": 18,
+      "sample_titles": [
+        "Jhane Respuesta profesional Fiverr",
+        "pasionled Proyecto aplicación Windows",
+        "Fiverr cuenta bloqueada"
+      ]
+    },
+    {
+      "gizmo_id": "g-2DQzU5UZl",
+      "suggested_name": "Copilot Javascript Phrase",
+      "conversation_count": 15,
+      "sample_titles": [
+        "JavaScript HTML CSS Help",
+        "Hammer.js Phrase COPILOT",
+        "Fill Blanks Copilot"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67ab14a8231c819181c69d9472e718a0",
+      "suggested_name": "Cuerpo Hegemonía Gay",
+      "conversation_count": 14,
+      "sample_titles": [
+        "Cuerpo y hegemonía gay",
+        "Autores sobre significación retrato",
+        "Resumen de tesina artística"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6874df4cb694819185336a0acb4e0a0a",
+      "suggested_name": "Visualización Fiverr Análisis",
+      "conversation_count": 14,
+      "sample_titles": [
+        "Análisis de visualización",
+        "Respuesta profesional Fiverr",
+        "Entrega final Fiverr"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67bc835eb1608191a40327ab02e69def",
+      "suggested_name": "Mercadosur Plan Estratégico",
+      "conversation_count": 14,
+      "sample_titles": [
+        "Plan estratégico digital local",
+        "Plan de Negocio MercadoSur",
+        "Consultoría financiera experta"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6884f2e91d40819197318fa3ae3ef1f3",
+      "suggested_name": "Pantalla Galaxy Ver",
+      "conversation_count": 12,
+      "sample_titles": [
+        "Ver pantalla en monitor externo",
+        "Captura pantalla teclado inalámbrico",
+        "Ver cámara en pantalla"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6853e990af508191adb81fa2be23ca08",
+      "suggested_name": "Contabo Vnc Proyectos",
+      "conversation_count": 12,
+      "sample_titles": [
+        "Proyectos en Contabo",
+        "Problemas TigerVNC conexión",
+        "Agregar proyecto GitHub Contabo"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67fae61e1ab881919eed3f9cb031daec",
+      "suggested_name": "Cpanel Ifastnet Solución",
+      "conversation_count": 11,
+      "sample_titles": [
+        "Crear subdominio cPanel",
+        "iFastNet experto ayuda",
+        "Cambio IP frecuente solución"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68779385e8688191b5b043ed900d0fde",
+      "suggested_name": "Crud Javascript Elementor",
+      "conversation_count": 10,
+      "sample_titles": [
+        "Menu interactivo Nocturno",
+        "Volver al último commit",
+        "Editar botón CRUD JS"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67f706769e848191b8a9608fb67d3bae",
+      "suggested_name": "Eliminar Docs Cambiar",
+      "conversation_count": 10,
+      "sample_titles": [
+        "Cambiar color texto azul",
+        "Fondo oscuro Google Docs",
+        "Eliminar líneas vacías Docs"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6840b11d2f6c8191a85840a8a132d74d",
+      "suggested_name": "Metrogas Reclamo Sobrefacturación",
+      "conversation_count": 9,
+      "sample_titles": [
+        "Reclamo sobrefacturación Metrogas ENARGAS",
+        "Reclamo Facturación Metrogas",
+        "Reordenar y revisar reclamo"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6874f2be9d448191b17513c01b0331e4",
+      "suggested_name": "Wappflow-N8N-03 Wappflow-N8N-08 Wappflow-N8N-02",
+      "conversation_count": 8,
+      "sample_titles": [
+        "wappflow-n8n-03",
+        "wappflow-n8n-08",
+        "wappflow-n8n-02"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-683cd2474b588191a895781e0aef8e26",
+      "suggested_name": "Marca Para Manual",
+      "conversation_count": 8,
+      "sample_titles": [
+        "Manual de Marca NutriPet",
+        "Nombres originales para Pet Shop",
+        "Frase para veterinaria"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67ffa533138481918956edb300d2cfe4",
+      "suggested_name": "Photoshop Expertise Guías",
+      "conversation_count": 7,
+      "sample_titles": [
+        "Photoshop AI Expertise",
+        "Guías para componer foto",
+        "Exportar PSD a PDF"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67c900f958288191931ec83d2d96699f",
+      "suggested_name": "Python Ayuda Revision",
+      "conversation_count": 7,
+      "sample_titles": [
+        "Ayuda en Python",
+        "revision de todo lo que hemos trabajado",
+        "Revisión ImportChatgptMysql.PY"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67fd4a501ed88191be976d6d029f4a61",
+      "suggested_name": "Post Cirugía Colon",
+      "conversation_count": 6,
+      "sample_titles": [
+        "Explicación de tratamiento diabetes",
+        "Análisis de Rifadom",
+        "Diarrea post cirugía colon"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67acd58e07808191b9383b3707e810d7",
+      "suggested_name": "The Odin Experto",
+      "conversation_count": 6,
+      "sample_titles": [
+        "Experto en JavaScript",
+        "The Odin Project Help",
+        "Clave360"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68965ab47cac81919eada2b936b1a96d",
+      "suggested_name": "Whatsapp Análisis Conversación",
+      "conversation_count": 6,
+      "sample_titles": [
+        "Desactivar respuestas automáticas",
+        "Análisis conversación WhatsApp IA-2",
+        "Análisis conversación WhatsApp IA-1"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6889ff12a7d88191a09d1c12322fa7d8",
+      "suggested_name": "Whatsapp Fusionar Carpetas",
+      "conversation_count": 6,
+      "sample_titles": [
+        "Fusionar carpetas proyecto",
+        "Recomendación para cervecería",
+        "MVP campaña WhatsApp bares"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68881bc5647c8191ba11903043f95ce9",
+      "suggested_name": "Chatgpt Liberar Memoria",
+      "conversation_count": 5,
+      "sample_titles": [
+        "05 Liberar memoria ChatGPT",
+        "04 Importar datos ChatGPT MySQL",
+        "03 Proceso archivo zip grande"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68a701719cac8191bb687082a522a9fc",
+      "suggested_name": "Transients Wordpress Suspendir",
+      "conversation_count": 5,
+      "sample_titles": [
+        "Suspendir o borrar transients",
+        "Borrar transients en WordPress",
+        "Eliminar padding y margin"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-683cd2a4543c8191bfccfb961fa2ef24",
+      "suggested_name": "Cerámica Costo Hora",
+      "conversation_count": 5,
+      "sample_titles": [
+        "Costo hora cerámica",
+        "Conformación cerámica líquida",
+        "Nombres para emprendimiento cerámico"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67d88fd97838819186dc92bc3f5564a0",
+      "suggested_name": "Tesis Asistente Rag",
+      "conversation_count": 5,
+      "sample_titles": [
+        "Asistente RAG privado",
+        "Perplexity and Burstiness Request",
+        "Devolución TP4 y Tesis"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-684431ca67cc81918ab0e612b28f6e3b",
+      "suggested_name": "Captación Atención Tasa",
+      "conversation_count": 5,
+      "sample_titles": [
+        "Captación y atención IA",
+        "Tasa de conversión WhatsApp",
+        "Instalación local VPN"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67f6ce0ffc348191b0983f2b6ef8e081",
+      "suggested_name": "Linkedin Trabajos Freelance",
+      "conversation_count": 4,
+      "sample_titles": [
+        "Trabajos freelance en LinkedIn",
+        "Análisis mensaje LinkedIn",
+        "Significado Software Engineer LinkedIn"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68d852d67a448191b40fa90923b3a228",
+      "suggested_name": "Krita Elegir Colores",
+      "conversation_count": 4,
+      "sample_titles": [
+        "Elegir colores HSB",
+        "Recuperar archivo en Krita",
+        "Importar foto a Krita"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68bc3dfc512c8191ad9d7d73eb762103",
+      "suggested_name": "Figma Copiar Estructura",
+      "conversation_count": 4,
+      "sample_titles": [
+        "02 Copiar estructura con Copilot",
+        "03 Qué es Postman",
+        "01 Usar Figma para firmas"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-687a811930ec819193b309ae0ca4cd63",
+      "suggested_name": "Monto Máximo Factura",
+      "conversation_count": 4,
+      "sample_titles": [
+        "Monto máximo factura ARCA",
+        "Repositorio afip-connector análisis",
+        "01 - Estructura base del módulo afipfact"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68605e0e786c8191b7280605d5c21cb4",
+      "suggested_name": "Windows Resolución 1920X1080",
+      "conversation_count": 4,
+      "sample_titles": [
+        "Resolución 1920x1080 problema",
+        "Experto en Windows 11",
+        "Abrir archivo en Google Docs"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68b231d04fb88191b2caa45d9a7c5451",
+      "suggested_name": "Banco Provincia New",
+      "conversation_count": 3,
+      "sample_titles": [
+        "New chat",
+        "Banco Provincia Comex",
+        "Vender dólares en Banco Provincia"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68a30767d8848191a281b48de3c299ca",
+      "suggested_name": "Prompt Para Modificar",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Modificar personaje imagen",
+        "Prompt para Leonardo.ai",
+        "Prompt para Leonardo AI"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-685035f166008191aac3d5b1dd21930a",
+      "suggested_name": "Whatsapp Exportar Chats",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Exportar chats WhatsApp",
+        "Sacar grupo del archivado",
+        "Conectar WhatsApp a MySQL"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68222650e6dc8191bd8518258c6f0f55",
+      "suggested_name": "Renault Clio Manual",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Renault Clio Manual Resumen",
+        "Asesoría plomería experto",
+        "Expertos en tecnologías nuevas"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-684027e3911c8191911d562738a0fded",
+      "suggested_name": "Dolibarr Automatización Contactos",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Automatización de Contactos",
+        "Ayuda Dolibarr experto",
+        "Conectar WhatsApp con Dolibarr"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68129887ea2881918df1245f3ba6ae46",
+      "suggested_name": "Windows Instalar Home",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Instalar Windows 10 Home",
+        "Instalar Windows desde USB",
+        "Cristina Windows 10 y Xubuntu"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67f995a202848191980e6a283c9fb542",
+      "suggested_name": "Joomla Desarrollar Mercado",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Desarrollar Mercado Barracas WP",
+        "Actualización Joomla y PHP",
+        "Texto no ingresado Joomla"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67b4af75bc2881919cffa94bfbb80881",
+      "suggested_name": "Cover Letter P5.Js",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Cover letter p5.js",
+        "Cover letter p5.js job",
+        "Estrategias venta Upwork"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67e134923ca081919d554735b7d49aed",
+      "suggested_name": "Chatgpt-4O Expert Help",
+      "conversation_count": 3,
+      "sample_titles": [
+        "ChatGPT-4o Expert Help",
+        "ChatGPT-4o Explicado",
+        "Velocidad PC lenta"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67b47bf1bf108191ad232c7c7b7dd1f1",
+      "suggested_name": "Resumen Habilidades Desarrollo",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Resumen habilidades desarrollo web",
+        "Evaluación de plataforma Freelancer",
+        "Propuesta para trabajo Joomla"
+      ]
+    },
+    {
+      "gizmo_id": "g-58Rc7ESRf",
+      "suggested_name": "Creative Narrativas Interactivas",
+      "conversation_count": 3,
+      "sample_titles": [
+        "Narrativas interactivas históricas",
+        "Creative Transformation Journey",
+        "Transformative Creative Process"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68a671938bbc8191b568bddeb78294ca",
+      "suggested_name": "Análisis Anuncio Linkedin",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Análisis de anuncio LinkedIn",
+        "Recomendaciones para respuesta"
+      ]
+    },
+    {
+      "gizmo_id": "g-680ec023d16c8191b9b98d8c9c718d99",
+      "suggested_name": "Metodología Patria Fusilada",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Metodología La Patria Fusilada",
+        "Metodología instalación artística"
+      ]
+    },
+    {
+      "gizmo_id": "g-8vB4w8uni",
+      "suggested_name": "Copilot Github Code",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Copilot",
+        "GitHub Copilot en VS Code"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68571e5877508191bbb69908cc1da76e",
+      "suggested_name": "Afip Sdk Facturación",
+      "conversation_count": 2,
+      "sample_titles": [
+        "AFIP SDK Facturación Gratis",
+        "AFIP Programador"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-684c0b7c6b9c819194255d5a4d9d8ace",
+      "suggested_name": "Gimp Alineación Capas",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Alineación de capas GIMP",
+        "Guardar como PSD en GIMP"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68359980bdd48191841d90f04aab665e",
+      "suggested_name": "Agentes Prospectos Redes",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Agentes IA Prospectos Redes",
+        "Agentes IA y Creación"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67ff98d1a8ac8191bea17dc9387f26fe",
+      "suggested_name": "Respuesta Crítica Arte",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Respuesta crítica de arte",
+        "Forgerock Inc"
+      ]
+    },
+    {
+      "gizmo_id": "g-Hkqnd7mFT",
+      "suggested_name": "Social Video Marketing",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Social Marketing Video Creation",
+        "Create Social Video"
+      ]
+    },
+    {
+      "gizmo_id": "g-KAFIWarLa",
+      "suggested_name": "Audio Transcription Assistance",
+      "conversation_count": 2,
+      "sample_titles": [
+        "Audio Transcription Assistance",
+        "Transcribe Audio Request"
+      ]
+    },
+    {
+      "gizmo_id": "g-alKfVrz9K",
+      "suggested_name": "Optimización Pieza Whatsapp",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Optimización pieza WhatsApp"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68435247ce608191961789a95585962a",
+      "suggested_name": "Asesoría Wix",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Asesoría en Wix"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-686ee77945a48191a3bd596c73da0947",
+      "suggested_name": "Diagnóstico Tratamiento Endodóntico",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Diagnóstico y tratamiento endodóntico"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6865e36b3dd0819188324ba5298f77da",
+      "suggested_name": "Requisitos Para Alquilar",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Requisitos para alquilar dpto"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-685705cd41d08191a8df0313e477c890",
+      "suggested_name": "Entrevista Diseño Web",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Entrevista diseño web WordPress"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6841051f23f0819195df519065049882",
+      "suggested_name": "Licitaciones Banco Provincia",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Licitaciones Banco Provincia"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-6840c3e61d7c81919b06505b4c9f1213",
+      "suggested_name": "Reclamos Enargas Metrogas",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Reclamos ENARGAS Metrogas"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-683dd341735c8191bff053a862a16089",
+      "suggested_name": "Correo Masivo Personalizado",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Correo masivo personalizado"
+      ]
+    },
+    {
+      "gizmo_id": "g-OYRq55TRG",
+      "suggested_name": "Detector Textos",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Detector IA en textos"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-680e69920f2881919dd926c6d5b467a6",
+      "suggested_name": "Juego Interactivo Sátira",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Juego interactivo sátira política"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-68016bbf6f048191abe3a96bd05381c3",
+      "suggested_name": "Optimizar Perfil Freelancer",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Optimizar perfil freelancer"
+      ]
+    },
+    {
+      "gizmo_id": "g-h8l4uLHFQ",
+      "suggested_name": "Marketing Video Ideas",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Marketing Video Ideas"
+      ]
+    },
+    {
+      "gizmo_id": "g-p-67eb9d68444081918764d0223d829981",
+      "suggested_name": "Postulación Búsqueda Freelance",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Postulación a búsqueda freelance"
+      ]
+    },
+    {
+      "gizmo_id": "g-2fkFE8rbu",
+      "suggested_name": "Guion Defensa Tp4",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Guion defensa TP4"
+      ]
+    },
+    {
+      "gizmo_id": "g-3bF2EA9OU",
+      "suggested_name": "Narrativas Interactivas Resistencia",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Narrativas interactivas y resistencia"
+      ]
+    },
+    {
+      "gizmo_id": "g-Cp4uhN6co",
+      "suggested_name": "User Permissions Setup",
+      "conversation_count": 1,
+      "sample_titles": [
+        "User Permissions Setup Guide"
+      ]
+    },
+    {
+      "gizmo_id": "g-VBW2fuz9Y",
+      "suggested_name": "Dolibarr Api Usage",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Dolibarr API usage"
+      ]
+    },
+    {
+      "gizmo_id": "g-67c2dc70771c8191a1c6ec2d6bb114f1",
+      "suggested_name": "Transcripción Audio",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Transcripción de audio"
+      ]
+    },
+    {
+      "gizmo_id": "g-9LElj3zJm",
+      "suggested_name": "Text Rewrite Request",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Text rewrite request"
+      ]
+    },
+    {
+      "gizmo_id": "g-2azCVmXdy",
+      "suggested_name": "Interactive Installation Transformation",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Interactive Installation Transformation"
+      ]
+    },
+    {
+      "gizmo_id": "g-kBwMIWxn5",
+      "suggested_name": "Ampliación Demanda Contenciosa",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Ampliación de demanda contenciosa"
+      ]
+    },
+    {
+      "gizmo_id": "g-MR9r3I9ao",
+      "suggested_name": "Using Text-To-Speech Solutions",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Using Text-to-Speech Solutions"
+      ]
+    },
+    {
+      "gizmo_id": "g-bo0FiWLY7",
+      "suggested_name": "Scolari Interface Laws",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Scolari Interface Laws"
+      ]
+    },
+    {
+      "gizmo_id": "g-kZ0eYXlJe",
+      "suggested_name": "Scholarly Research Assistance",
+      "conversation_count": 1,
+      "sample_titles": [
+        "Scholarly Research Assistance"
+      ]
+    },
+    {
+      "gizmo_id": null,
+      "suggested_name": "Conversaciones Generales",
+      "conversation_count": 808,
+      "sample_titles": [
+        "AGDIC Encuesta universitaria",
+        "Análisis y propuestas espacio",
+        "Honorarios administración consorcio"
+      ]
+    }
+  ]
+}

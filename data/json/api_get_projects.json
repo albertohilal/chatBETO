@@ -1,0 +1,66 @@
+[
+  {
+    "id": 12,
+    "name": "ChatGPT",
+    "description": "Proyecto principal ChatGPT",
+    "is_starred": true,
+    "conversation_count": 37,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 5,
+    "name": "whatsapp",
+    "description": "Automatización WhatsApp",
+    "is_starred": false,
+    "conversation_count": 83,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 8,
+    "name": "Wordpress",
+    "description": "Desarrollo web WordPress",
+    "is_starred": false,
+    "conversation_count": 80,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 25,
+    "name": "Agdiciuna",
+    "description": "Proyecto Agdiciuna",
+    "is_starred": false,
+    "conversation_count": 32,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 31,
+    "name": "Taller complementario Pintura",
+    "description": "Arte y pintura",
+    "is_starred": false,
+    "conversation_count": 30,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 7,
+    "name": "Xubuntu",
+    "description": "Sistema operativo Linux",
+    "is_starred": false,
+    "conversation_count": 25,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 11,
+    "name": "VS Code Github",
+    "description": "Desarrollo con VS Code",
+    "is_starred": true,
+    "conversation_count": 23,
+    "has_chatgpt_id": true
+  },
+  {
+    "id": 15,
+    "name": "Leonardo.a.i",
+    "description": "IA generación de imágenes",
+    "is_starred": false,
+    "conversation_count": 14,
+    "has_chatgpt_id": true
+  }
+]

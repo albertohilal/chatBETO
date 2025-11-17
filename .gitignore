@@ -6,27 +6,46 @@
 db_config.json
 openai_key.txt
 
+# Datos sensibles - Exports de ChatGPT
+Auxiliar/
+data/exports/
+extracted/
+temp_*/
+
 # Archivos de log
 *.log
 error_log.txt
+data/logs/
 
 # Archivos temporales
 *.tmp
 *.temp
-temp_*/
 
 # Directorios de entornos virtuales
 .venv*/
 node_modules/
 
-# Archivos de backup
+# Archivos de backup y SQL dumps
 backup_*.sql
 *.backup
+
+# Screenshots y datos de debug
+*.png
+data/screenshots/
 
 # Directorios de cache
 __pycache__/
 *.pyc
 *.pyo
+
+# Archivos IDE
+.vscode/
+.idea/
+
+# Archivos específicos con datos sensibles
+mapeo_nombres_reales.json
+conversation_project_mapping.json
+proyectos_listos_puppeteer.json
 
 # Archivos de IDE
 .vscode/

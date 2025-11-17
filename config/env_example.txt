@@ -1,0 +1,16 @@
+# Configuración de variables de entorno para ChatBETO
+# Copia este archivo como .env y configura tus valores
+
+# OpenAI API Key (obligatorio para sincronización)
+OPENAI_API_KEY=tu_clave_openai_aqui
+
+# Base de datos MySQL
+MYSQL_HOST=localhost
+MYSQL_USER=root
+MYSQL_PASSWORD=tu_password
+MYSQL_DATABASE=test
+MYSQL_PORT=3306
+
+# Configuración opcional
+DEBUG=false
+MAX_SYNC_CONVERSATIONS=100

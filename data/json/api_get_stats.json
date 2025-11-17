@@ -1,0 +1,17 @@
+{
+  "projects": 65,
+  "conversations": 1532,
+  "messages": 57,
+  "synced": 1,
+  "projects_with_gpt_id": 61,
+  "recent_conversations": 15,
+  "sync_percentage": 0.1,
+  "gpt_id_percentage": 93.8,
+  "top_projects": [
+    {"name": "whatsapp", "conversation_count": 83},
+    {"name": "Wordpress", "conversation_count": 80},
+    {"name": "ChatGPT", "conversation_count": 37},
+    {"name": "Agdiciuna", "conversation_count": 32},
+    {"name": "Taller complementario Pintura", "conversation_count": 30}
+  ]
+}

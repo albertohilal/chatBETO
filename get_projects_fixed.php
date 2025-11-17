@@ -3,7 +3,7 @@ header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connection.php';
 
 try {
-    // Obtener todos los proyectos con su conteo de conversaciones
+    // Obtener todos los proyectos con conteo real de conversaciones
     $stmt = $pdo->query("
         SELECT 
             p.id,
@@ -20,30 +20,23 @@ try {
     
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Formatear datos para compatibilidad
+    // Formatear datos
     foreach ($projects as &$project) {
         $project['id'] = (int)$project['id'];
         $project['actual_conversations'] = (int)$project['actual_conversations'];
         $project['is_starred'] = (bool)$project['is_starred'];
-        $project['has_chatgpt_id'] = !empty($project['chatgpt_project_id']);
     }
     
-    $response = [
+    // Respuesta compatible con la interfaz
+    echo json_encode([
         'total_projects' => count($projects),
         'projects' => $projects
-    ];
-    
-    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
-        'error' => 'Error de conexión a la base de datos: ' . $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
+    
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
-        'error' => 'Error interno: ' . $e->getMessage()
+        'error' => 'Error: ' . $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }
 ?>
