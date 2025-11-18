@@ -1,0 +1,34 @@
+DEPLOY CHECKLIST - chatBETO iFastNet
+===================================
+
+□ 1. Descarga: chatBETO_DEPLOY_IFASTNET.zip
+
+□ 2. Login iFastNet: https://www.byethost.com/free-hosting/cpanel
+
+□ 3. Abre File Manager → htdocs/
+
+□ 4. Elimina archivos chatBETO anteriores
+
+□ 5. Sube: chatBETO_DEPLOY_IFASTNET.zip
+
+□ 6. Extrae el ZIP
+
+□ 7. Verifica estructura:
+    htdocs/chatBeto/index.html ✓
+    htdocs/chatBeto/api/ ✓
+    htdocs/chatBeto/database/ ✓
+
+□ 8. Prueba: tudominio.byethost46.org/chatBeto/debug_conexion.php
+
+□ 9. Prueba: tudominio.byethost46.org/chatBeto/
+
+□ 10. Confirma que funcionen:
+     - Carga proyectos ✓
+     - Búsquedas ✓  
+     - Sin errores JSON ✓
+
+ARCHIVOS CLAVE:
+- chatBETO_DEPLOY_IFASTNET.zip (32KB)
+- GUIA_DEPLOY_IFASTNET.md
+
+¡LISTO PARA PRODUCCIÓN!

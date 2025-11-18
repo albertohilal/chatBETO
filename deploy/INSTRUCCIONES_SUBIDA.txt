@@ -1,0 +1,51 @@
+🚀 INSTRUCCIONES PARA SUBIR chatBETO A IFASTNET
+================================================
+
+📦 ARCHIVO CREADO: chatBETO_ifastnet.zip (31KB)
+
+🎯 PASOS PARA SUBIR:
+
+1. ACCEDE A TU PANEL DE IFASTNET
+   - Entra a tu cuenta de byethost o ifastnet
+   - Ve a "File Manager" o "Administrador de archivos"
+
+2. NAVEGA A LA CARPETA HTDOCS
+   - Busca la carpeta "htdocs" o "public_html"
+   - Esta es la carpeta raíz de tu sitio web
+
+3. SUBE EL ARCHIVO ZIP
+   - Haz clic en "Upload" o "Subir archivos"
+   - Selecciona el archivo: chatBETO_ifastnet.zip
+   - Espera a que se suba completamente
+
+4. EXTRAE EL ZIP
+   - Haz clic derecho en chatBETO_ifastnet.zip
+   - Selecciona "Extract" o "Extraer"
+   - Confirma la extracción
+
+5. ELIMINA EL ZIP (Opcional)
+   - Borra el archivo .zip para ahorrar espacio
+   - Solo deja los archivos extraídos
+
+📁 ARCHIVOS QUE SE SUBIRÁN:
+✅ index.html (página principal)
+✅ styles.css (estilos)
+✅ estadisticas.html (dashboard)
+✅ api/ (carpeta con todas las APIs)
+✅ database/db_connection.php (configurado para iFastNet)
+
+🔗 BASE DE DATOS:
+✅ Ya configurada para conectar a tu BD existente
+✅ Host: sv46.byethost46.org
+✅ Base de datos: iunaorg_chatBeto
+✅ ¡NO necesitas crear nueva BD!
+
+🌐 PRUEBA TU SITIO:
+- Visita: tudominio.byethost46.org
+- Prueba hacer una búsqueda
+- ¡Debería funcionar inmediatamente!
+
+❗ IMPORTANTE: 
+- NO subas archivos de esquema (.sql)
+- NO sobreescribas la base de datos
+- La configuración ya está lista para producción
