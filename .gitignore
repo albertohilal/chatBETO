@@ -12,6 +12,10 @@ data/exports/
 extracted/
 temp_*/
 
+# Releases y ZIPs de deploy
+releases/
+*.zip
+
 # Archivos de log
 *.log
 error_log.txt
