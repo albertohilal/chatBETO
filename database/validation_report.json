@@ -1,0 +1,634 @@
+{
+  "timestamp": "2025-11-19T15:31:19.026Z",
+  "report": {
+    "sameAsTitle": {
+      "count": 4,
+      "examples": [
+        {
+          "message_id": "aaa272b6-ca3b-41d2-bb02-f6213e749b51",
+          "conversation_id": "67714db8-1408-8012-bef2-c6aa543871b8",
+          "conversation_title": "Activar Windows 10",
+          "message_content": "activar windows 10",
+          "role": "user",
+          "created_at": "2025-10-12T16:47:23.000Z"
+        },
+        {
+          "message_id": "564cdcaf-d792-4876-a481-be88285b5904",
+          "conversation_id": "68d80a90-61e4-8326-8a1e-98c5fd9556b6",
+          "conversation_title": "Guiame por favor",
+          "message_content": "Guiame por favor",
+          "role": "user",
+          "created_at": "2025-11-17T13:40:59.000Z"
+        },
+        {
+          "message_id": "208225f2-67ca-4e50-8767-a6019084d714",
+          "conversation_id": "68fba9e5-f15c-8327-a4d1-c7b7e66a6ff9",
+          "conversation_title": "Instalar en Xubuntu",
+          "message_content": "instalar en xubuntu",
+          "role": "user",
+          "created_at": "2025-11-17T12:53:36.000Z"
+        },
+        {
+          "message_id": "3105a862-d364-4733-ba22-5300ba333a7d",
+          "conversation_id": "68fbf06c-7e90-8327-80b5-a157bb50a531",
+          "conversation_title": "Instalar Zoom en Xubuntu",
+          "message_content": "Instalar zoom en xubuntu",
+          "role": "user",
+          "created_at": "2025-11-17T13:09:07.000Z"
+        }
+      ],
+      "description": "Mensajes donde content es idéntico al título de la conversación (posible error de datos)"
+    },
+    "orphanMessages": {
+      "count": 0,
+      "examples": [],
+      "description": "Mensajes que referencian conversaciones que no existen"
+    },
+    "emptyConversations": {
+      "count": 1,
+      "examples": [
+        {
+          "conversation_id": "",
+          "title": "ID de proyectos en ChatGPT",
+          "project_id": 43,
+          "created_at": "2025-10-13T11:28:50.000Z",
+          "conversation_origin": null
+        }
+      ],
+      "description": "Conversaciones que no tienen ningún mensaje asociado"
+    },
+    "indexExist": {
+      "exists": true,
+      "details": [
+        {
+          "Table": "messages",
+          "Non_unique": 1,
+          "Key_name": "idx_convo_created",
+          "Seq_in_index": 1,
+          "Column_name": "conversation_id",
+          "Collation": "A",
+          "Cardinality": 3847,
+          "Sub_part": null,
+          "Packed": null,
+          "Null": "",
+          "Index_type": "BTREE",
+          "Comment": "",
+          "Index_comment": "",
+          "Ignored": "NO"
+        },
+        {
+          "Table": "messages",
+          "Non_unique": 1,
+          "Key_name": "idx_convo_created",
+          "Seq_in_index": 2,
+          "Column_name": "created_at",
+          "Collation": "A",
+          "Cardinality": 26933,
+          "Sub_part": null,
+          "Packed": null,
+          "Null": "",
+          "Index_type": "BTREE",
+          "Comment": "",
+          "Index_comment": "",
+          "Ignored": "NO"
+        }
+      ],
+      "description": "Índice de optimización para consultas por conversación y fecha"
+    },
+    "columns": {
+      "conversations": [
+        {
+          "Field": "title",
+          "Type": "varchar(500)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "external_conversation_id",
+          "Type": "varchar(100)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "updated_at_timestamp_ms",
+          "Type": "decimal(20,6)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "created_at",
+          "Type": "datetime(3)",
+          "Null": "NO",
+          "Key": "",
+          "Default": "current_timestamp(3)",
+          "Extra": ""
+        }
+      ],
+      "messages": [
+        {
+          "Field": "conversation_id",
+          "Type": "varchar(36)",
+          "Null": "NO",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "content",
+          "Type": "longtext",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "role",
+          "Type": "varchar(50)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "created_at",
+          "Type": "datetime(3)",
+          "Null": "NO",
+          "Key": "",
+          "Default": "current_timestamp(3)",
+          "Extra": ""
+        }
+      ],
+      "description": "Estructura de columnas críticas para el funcionamiento"
+    },
+    "generalStats": {
+      "conversations": {
+        "total_conversations": 1693,
+        "unique_projects": 8,
+        "oldest_conversation": "2025-10-12T16:44:29.000Z",
+        "newest_conversation": "2025-11-17T10:06:33.000Z"
+      },
+      "messages": {
+        "total_messages": 82937,
+        "unique_roles": 4,
+        "conversations_with_messages": 1692,
+        "oldest_message": "2025-10-12T16:47:02.000Z",
+        "newest_message": "2025-11-17T15:38:22.000Z"
+      },
+      "description": "Estadísticas generales de la base de datos"
+    },
+    "messageRoles": {
+      "distribution": [
+        {
+          "role": "assistant",
+          "count": 38750,
+          "unique_conversations": 1691
+        },
+        {
+          "role": "user",
+          "count": 22105,
+          "unique_conversations": 1692
+        },
+        {
+          "role": "tool",
+          "count": 14622,
+          "unique_conversations": 791
+        },
+        {
+          "role": "system",
+          "count": 7460,
+          "unique_conversations": 1692
+        }
+      ],
+      "description": "Distribución de roles en los mensajes"
+    },
+    "contentIssues": {
+      "issues": [
+        {
+          "count": 34280,
+          "issue_type": "Empty content"
+        },
+        {
+          "count": 34816,
+          "issue_type": "Very short content"
+        },
+        {
+          "count": 35,
+          "issue_type": "Extremely long content"
+        }
+      ],
+      "description": "Problemas potenciales en el contenido de mensajes"
+    },
+    "titleLikeMessages": {
+      "count": 50,
+      "examples": [
+        {
+          "message_id": "aaa24318-0dd5-422d-80ee-a825597ca0bb",
+          "conversation_id": "009395d7-9a84-4508-bc46-f42281143c17",
+          "conversation_title": "Experto redactor disponible",
+          "message_content": "actua como un experto redactor",
+          "role": "user",
+          "content_length": 30
+        },
+        {
+          "message_id": "aaa2da94-ff91-4373-9d0c-6f70fe47a1f7",
+          "conversation_id": "00ae4d9e-6ca8-401c-a707-d1c638c322c2",
+          "conversation_title": "Negative Feedback Requested",
+          "message_content": "I need negative words",
+          "role": "user",
+          "content_length": 21
+        },
+        {
+          "message_id": "aaa26a28-14d2-4312-8a09-51680987aa68",
+          "conversation_id": "00daaf17-080a-402c-b766-44a9402b4d40",
+          "conversation_title": "Experto en Congresos Académicos",
+          "message_content": "Actua como experto en Congresos academicos",
+          "role": "user",
+          "content_length": 42
+        },
+        {
+          "message_id": "aaa2a342-83d0-4d42-a17a-979321a1b2ee",
+          "conversation_id": "00daaf17-080a-402c-b766-44a9402b4d40",
+          "conversation_title": "Experto en Congresos Académicos",
+          "message_content": "continua",
+          "role": "user",
+          "content_length": 8
+        },
+        {
+          "message_id": "aaa2f6d5-faa2-469f-a136-d3a311fae33f",
+          "conversation_id": "00daaf17-080a-402c-b766-44a9402b4d40",
+          "conversation_title": "Experto en Congresos Académicos",
+          "message_content": "Cual es la diferencia entre Conferencista y expositor",
+          "role": "user",
+          "content_length": 53
+        },
+        {
+          "message_id": "aaa276ee-b749-47dc-beab-226b7bbf2063",
+          "conversation_id": "011a8d05-1e21-4c05-b29b-daef335ade9c",
+          "conversation_title": "Análisis de texto académico",
+          "message_content": "De aqui en mas dame las respuestas manteniendo las caracteristicas del texto analizado",
+          "role": "user",
+          "content_length": 86
+        },
+        {
+          "message_id": "aaa2fec0-e53c-4283-ba17-37d49b6b2acd",
+          "conversation_id": "011a8d05-1e21-4c05-b29b-daef335ade9c",
+          "conversation_title": "Análisis de texto académico",
+          "message_content": "continua",
+          "role": "user",
+          "content_length": 8
+        },
+        {
+          "message_id": "aaa20731-5a57-421a-9aa8-4ae57cd04d48",
+          "conversation_id": "013d307b-b011-4d48-ba29-d27f6805c87d",
+          "conversation_title": "Expert in HTML, PHP, CSS.",
+          "message_content": "actua como experto programador html php css",
+          "role": "user",
+          "content_length": 43
+        },
+        {
+          "message_id": "aaa263e7-ae2b-45dc-baa0-368bb3d00989",
+          "conversation_id": "0296781a-3a32-4a03-9903-67f11bdb382c",
+          "conversation_title": "Página Web Muestra Catedra",
+          "message_content": "Explorando mi mundo interior",
+          "role": "user",
+          "content_length": 28
+        },
+        {
+          "message_id": "aaa235c2-653a-4457-bf95-67e9b0180353",
+          "conversation_id": "0307974b-2dcb-462c-bc7a-73b05003da42",
+          "conversation_title": "Artistas Sudamericanos Destacados",
+          "message_content": "me refiero al artista escultor distefano",
+          "role": "user",
+          "content_length": 40
+        },
+        {
+          "message_id": "aaa239e5-1a01-4cfd-bb29-eadb02e6472e",
+          "conversation_id": "0307974b-2dcb-462c-bc7a-73b05003da42",
+          "conversation_title": "Artistas Sudamericanos Destacados",
+          "message_content": "carlos alonzo",
+          "role": "user",
+          "content_length": 13
+        },
+        {
+          "message_id": "aaa2722d-c170-465d-be76-b4c9b95e9ec5",
+          "conversation_id": "0307974b-2dcb-462c-bc7a-73b05003da42",
+          "conversation_title": "Artistas Sudamericanos Destacados",
+          "message_content": "necesito 10 artist sudamericanos",
+          "role": "user",
+          "content_length": 32
+        },
+        {
+          "message_id": "aaa2ac37-82c4-4b05-8b1e-c39e435dad12",
+          "conversation_id": "0307974b-2dcb-462c-bc7a-73b05003da42",
+          "conversation_title": "Artistas Sudamericanos Destacados",
+          "message_content": "hablame del atista carlos alozo",
+          "role": "user",
+          "content_length": 31
+        },
+        {
+          "message_id": "aaa2b41e-e526-414a-8882-b5e1097e8f26",
+          "conversation_id": "0307974b-2dcb-462c-bc7a-73b05003da42",
+          "conversation_title": "Artistas Sudamericanos Destacados",
+          "message_content": "juan carlos distefano",
+          "role": "user",
+          "content_length": 21
+        },
+        {
+          "message_id": "aaa2d93b-dcbd-44e7-946d-8908165cdaa8",
+          "conversation_id": "0307974b-2dcb-462c-bc7a-73b05003da42",
+          "conversation_title": "Artistas Sudamericanos Destacados",
+          "message_content": "hablame de distefano",
+          "role": "user",
+          "content_length": 20
+        },
+        {
+          "message_id": "aaa206e6-649a-43b2-beaf-1afe38f03ee6",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "como agrego columna del importe de puja que puse",
+          "role": "user",
+          "content_length": 48
+        },
+        {
+          "message_id": "aaa24782-65d4-4a3b-9afb-e26c5e7e4615",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "Como descvargar las palabras claves de mi anuncio",
+          "role": "user",
+          "content_length": 49
+        },
+        {
+          "message_id": "aaa2544a-3754-4541-8304-e715212084bb",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "La campaña inicio el 17 de Mayo de 2024 y a la fecha no arroja ninguna impresion",
+          "role": "user",
+          "content_length": 81
+        },
+        {
+          "message_id": "aaa25c0e-7053-4d40-bb6f-2ada92c4d886",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "En Palabras clave de búsqueda como agregar una columna de los clic de cada palabra clave",
+          "role": "user",
+          "content_length": 89
+        },
+        {
+          "message_id": "aaa27611-6c62-4e86-ba07-66a1796a917a",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "Infraccon en la politica Opción de compensación adicional (solo en la UE)",
+          "role": "user",
+          "content_length": 75
+        },
+        {
+          "message_id": "aaa27a36-ed27-4f12-9b55-7b692a7fb10d",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "Añade extractos de sitio a DesarrolloWebWP",
+          "role": "user",
+          "content_length": 43
+        },
+        {
+          "message_id": "aaa2911c-720a-41ad-ab91-9b14170b6800",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "que significa Top of page bid (low range)",
+          "role": "user",
+          "content_length": 41
+        },
+        {
+          "message_id": "aaa29d96-eec0-4807-95d4-15b79621b07a",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "Donde busco los datos de las palabras clave de una campaña",
+          "role": "user",
+          "content_length": 59
+        },
+        {
+          "message_id": "aaa2f712-05f9-49a2-869d-4cf36be54e2b",
+          "conversation_id": "03605ccd-465d-4e03-aa26-d8594ddd8db2",
+          "conversation_title": "DesarrolloWebWP Campaign Suggestions",
+          "message_content": "Como ver mi puja por cpc max",
+          "role": "user",
+          "content_length": 28
+        },
+        {
+          "message_id": "aaa28778-7177-4115-8e41-1a61e47400c1",
+          "conversation_id": "03db504a-7dab-4232-a939-6eb7ef09f0ad",
+          "conversation_title": "P5js Expert Assistance",
+          "message_content": "Actua como experto programador de P5js",
+          "role": "user",
+          "content_length": 38
+        },
+        {
+          "message_id": "aaa2af2e-bb88-4b09-a28c-e8e037a4a346",
+          "conversation_id": "03f7ed47-3be5-4c17-bcf5-2987601181f3",
+          "conversation_title": "Sketch Bird Sounds Visualization.",
+          "message_content": "traduce el texto al ingles",
+          "role": "user",
+          "content_length": 26
+        },
+        {
+          "message_id": "aaa21677-a646-4dfb-a085-0fa758f79ba2",
+          "conversation_id": "041d84d6-9d38-4a64-a067-0ba4620a1097",
+          "conversation_title": "Ejecutar p5.js en Visual Studio Code.",
+          "message_content": "Actua como experto en visual studio code y dime como hago para correr un sketch de p5js",
+          "role": "user",
+          "content_length": 87
+        },
+        {
+          "message_id": "aaa2c85d-6629-40c9-a9b4-29f6c2d4406f",
+          "conversation_id": "05ed48b4-e27d-4f76-9144-bb90eb186a9c",
+          "conversation_title": "Expert JavaScript HTML CSS",
+          "message_content": "Tampoco funciona",
+          "role": "user",
+          "content_length": 16
+        },
+        {
+          "message_id": "aaa2f322-156b-4d04-a509-ae881807fcf9",
+          "conversation_id": "05ed48b4-e27d-4f76-9144-bb90eb186a9c",
+          "conversation_title": "Expert JavaScript HTML CSS",
+          "message_content": "dame otro ejemplo donde ademas de generar un borde cambio el color del texto a yellow",
+          "role": "user",
+          "content_length": 85
+        },
+        {
+          "message_id": "bbb21045-61f0-4a41-a765-4e3be5369444",
+          "conversation_id": "05ed48b4-e27d-4f76-9144-bb90eb186a9c",
+          "conversation_title": "Expert JavaScript HTML CSS",
+          "message_content": "Actua como experto programador javascript html css",
+          "role": "user",
+          "content_length": 50
+        },
+        {
+          "message_id": "aaa20853-1b19-4bab-97da-4a7faa8d74cd",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "error modifica el html para colocoar el js en el centro de la pantalla",
+          "role": "user",
+          "content_length": 70
+        },
+        {
+          "message_id": "aaa2181e-4560-4f66-bd71-33dea3d8da2b",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "La imagen tiene que indicar el uso de las teclas flecha para mover a munch, en forma minimalista",
+          "role": "user",
+          "content_length": 96
+        },
+        {
+          "message_id": "aaa2224e-fca0-4913-9d5c-2567d265f316",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Modifica este codigo para que en la cabeza dibuje una elipse",
+          "role": "user",
+          "content_length": 60
+        },
+        {
+          "message_id": "aaa226f7-c1d6-4398-b6c6-5f36909637a3",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "modifica este codigo para que la posicion final de y sea y = 0",
+          "role": "user",
+          "content_length": 62
+        },
+        {
+          "message_id": "aaa22cd2-1b4d-4be2-8e31-7f4de20b8513",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Modifica el codigo para que en el movil las imagenes no aparezcan distorsionadas",
+          "role": "user",
+          "content_length": 80
+        },
+        {
+          "message_id": "aaa23d80-48da-4929-bbe9-6d256c4c73f5",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "modifica class Avion para que el tamaño vaya creciendo en cada frame proporcional al tamaño de y",
+          "role": "user",
+          "content_length": 98
+        },
+        {
+          "message_id": "aaa245e0-c34b-43d1-9dcb-3cd0f32cb6ea",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "modifica elo codigo para que el movimiento sea continuo mientras aprieto una de las flechas",
+          "role": "user",
+          "content_length": 91
+        },
+        {
+          "message_id": "aaa249ef-429c-4122-9dd9-284b095dadec",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "ahora es necesario que los puntos claves del cuerpo acompañen la imagen de la camara",
+          "role": "user",
+          "content_length": 85
+        },
+        {
+          "message_id": "aaa24d41-6f56-47a3-b361-05e80a4af536",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Modifica el codigo para que la altura mínima de munch no sea inferior a 36px",
+          "role": "user",
+          "content_length": 77
+        },
+        {
+          "message_id": "aaa2523f-8522-4fc8-81c2-b5f971ae5619",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Dame el codigo javascript completo con todas las recomendaciones",
+          "role": "user",
+          "content_length": 64
+        },
+        {
+          "message_id": "aaa27ca4-8001-47bc-a40f-06b6f740e925",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Modifica el codigo para en el modo escritorio pueda mover a munch con la teclas flecha",
+          "role": "user",
+          "content_length": 86
+        },
+        {
+          "message_id": "aaa28c08-6bcc-42f2-938f-16173507b09e",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "dame el codigo completo del sketch",
+          "role": "user",
+          "content_length": 34
+        },
+        {
+          "message_id": "aaa28e2a-d147-4bff-9047-a0e6ac95b9b1",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Dame el codigo completo con las modificaciones propuestas",
+          "role": "user",
+          "content_length": 57
+        },
+        {
+          "message_id": "aaa294ad-2e1a-4069-8904-a87883e11a0b",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Modifica el codigo para que el canvas se ubique en el centro de la pantalla",
+          "role": "user",
+          "content_length": 75
+        },
+        {
+          "message_id": "aaa2ac0b-7891-4528-aa6c-dad029060b07",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Como se llama la accion de mover el personaje con el dedo en la pantalla del movil",
+          "role": "user",
+          "content_length": 82
+        },
+        {
+          "message_id": "aaa2ad3e-cf1f-4157-82dd-3a547929c9e7",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Consrva la posibilidad de mover a munch con las teclas tal como estaba en el scrpt original",
+          "role": "user",
+          "content_length": 91
+        },
+        {
+          "message_id": "aaa2b1e0-48b1-4ff6-91c3-8f5b9f086968",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Dame el codigo completo con las modificaciones propuestas",
+          "role": "user",
+          "content_length": 57
+        },
+        {
+          "message_id": "aaa2b95a-6dd2-478d-a3c1-4f35a9de5232",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "modifica el codigo para mover a munch tambien con las teclas flecha en el odenador",
+          "role": "user",
+          "content_length": 82
+        },
+        {
+          "message_id": "aaa2e02e-3ed5-4595-86e3-35f2dd6c23f1",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Modifica el codigo para que en el movil se desactie la pantalla al hacer tap",
+          "role": "user",
+          "content_length": 76
+        },
+        {
+          "message_id": "aaa2ea37-e277-46cc-b6dc-f1008bd5145c",
+          "conversation_id": "05ee4805-ca49-4bf9-8e75-73db95eda526",
+          "conversation_title": "p5.js Infames Asesinos",
+          "message_content": "Dame valores posibles para Inicialización de Munch:",
+          "role": "user",
+          "content_length": 52
+        }
+      ],
+      "description": "Mensajes cortos de usuario que podrían ser títulos en lugar de contenido real"
+    }
+  }
+}

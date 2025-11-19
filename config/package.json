@@ -12,10 +12,16 @@
     "test": "node puppeteer-scraper.js"
   },
   "dependencies": {
-    "puppeteer": "^21.5.0",
-    "mysql2": "^3.6.5"
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.6.5",
+    "puppeteer": "^21.5.0"
   },
-  "keywords": ["puppeteer", "chatgpt", "scraping", "mysql"],
+  "keywords": [
+    "puppeteer",
+    "chatgpt",
+    "scraping",
+    "mysql"
+  ],
   "author": "ChatBETO Project",
   "license": "MIT"
 }
