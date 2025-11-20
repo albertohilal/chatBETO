@@ -337,10 +337,15 @@
         }
 
         async function loadStats() {
-            const projectId = document.getElementById('projectSelect').value;
+            const projectId = document.getElementById('currentProjectFilter').value;
             
             try {
-                const response = await fetch(`${API_BASE}/get_project_stats.php?project_id=${projectId}`);
+                // Si no hay proyecto seleccionado, usar endpoint sin filtro de proyecto
+                const endpoint = projectId 
+                    ? `${API_BASE}/get_project_stats.php?project_id=${projectId}`
+                    : `${API_BASE}/get_project_stats.php`; // Stats de todos los proyectos
+                    
+                const response = await fetch(endpoint);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -371,7 +376,7 @@
 
         // Buscar mensajes con filtros
         async function searchMessages() {
-            const currentProjectId = document.getElementById('currentProjectFilter').value || 1;
+            const currentProjectId = document.getElementById('currentProjectFilter').value;
             const search = document.getElementById('searchInput').value;
             const role = document.getElementById('roleFilter').value;
             const conversationSearch = document.getElementById('conversationSearch').value;
@@ -386,12 +391,16 @@
             
             try {
                 const queryParams = new URLSearchParams({
-                    project_id: currentProjectId,
                     limit: messagesPerPage,
                     offset: currentPage * messagesPerPage,
                     order_by: 'created_at',
                     order_direction: 'DESC'
                 });
+                
+                // Solo agregar project_id si hay un proyecto específico seleccionado
+                if (currentProjectId) {
+                    queryParams.append('project_id', currentProjectId);
+                }
                 
                 if (search) queryParams.append('search', search);
                 if (role) queryParams.append('role', role);
