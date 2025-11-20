@@ -215,15 +215,16 @@
 
         <div class="filters">
             <div class="filter-group">
-                <label for="searchInput">Buscar en contenido:</label>
-                <input type="text" id="searchInput" placeholder="Buscar texto en mensajes...">
-            </div>
-            
-            <div class="filter-group">
                 <label for="conversationFilter">Filtrar por conversación:</label>
                 <select id="conversationFilter">
                     <option value="">Todas las conversaciones</option>
                 </select>
+                <input type="text" id="conversationSearch" placeholder="Buscar conversación..." style="margin-top: 5px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+            </div>
+            
+            <div class="filter-group">
+                <label for="searchInput">Buscar en contenido:</label>
+                <input type="text" id="searchInput" placeholder="Buscar texto en mensajes...">
             </div>
             
             <div class="filter-group">
@@ -317,6 +318,9 @@
                     const select = document.getElementById('conversationFilter');
                     select.innerHTML = '<option value="">Todas las conversaciones</option>';
                     
+                    // Guardar todas las conversaciones para el filtrado
+                    window.allConversations = data.data;
+                    
                     data.data.forEach(conversation => {
                         const option = document.createElement('option');
                         option.value = conversation.id;
@@ -326,6 +330,38 @@
                 }
             } catch (error) {
                 console.error('Error cargando conversaciones:', error);
+            }
+        }
+
+        // Filtrar conversaciones en tiempo real
+        function filterConversations() {
+            const searchTerm = document.getElementById('conversationSearch').value.toLowerCase();
+            const select = document.getElementById('conversationFilter');
+            
+            // Limpiar opciones actuales
+            select.innerHTML = '<option value="">Todas las conversaciones</option>';
+            
+            // Filtrar conversaciones que contienen el término de búsqueda
+            if (window.allConversations) {
+                const filtered = window.allConversations.filter(conversation => 
+                    conversation.title.toLowerCase().includes(searchTerm)
+                );
+                
+                filtered.forEach(conversation => {
+                    const option = document.createElement('option');
+                    option.value = conversation.id;
+                    option.textContent = `${conversation.title} (${conversation.message_count} mensajes)`;
+                    select.appendChild(option);
+                });
+                
+                // Si hay un término de búsqueda pero no hay resultados, mostrar mensaje
+                if (searchTerm && filtered.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'No se encontraron conversaciones';
+                    option.disabled = true;
+                    select.appendChild(option);
+                }
             }
         }
         async function loadStats() {
@@ -523,6 +559,16 @@
         document.getElementById('conversationFilter').addEventListener('change', function() {
             currentPage = 0;
             searchMessages();
+        });
+
+        document.getElementById('conversationSearch').addEventListener('input', function() {
+            filterConversations();
+        });
+
+        document.getElementById('conversationSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterConversations();
+            }
         });
     </script>
 </body>
