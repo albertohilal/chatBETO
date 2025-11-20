@@ -30,7 +30,7 @@
         
         .filters {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1.5fr 1.5fr 1fr 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
             padding: 20px;
@@ -204,6 +204,30 @@
             color: white;
             border-color: #007bff;
         }
+        
+        .project-selector {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            font-size: 12px;
+            min-width: 100px;
+        }
+        
+        .project-selector:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
+        .update-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #c3e6cb;
+        }
     </style>
 </head>
 <body>
@@ -214,6 +238,13 @@
         </div>
 
         <div class="filters">
+            <div class="filter-group">
+                <label for="projectSelect">Proyecto:</label>
+                <select id="projectSelect">
+                    <option value="1">Proyecto 1</option>
+                </select>
+            </div>
+            
             <div class="filter-group">
                 <label for="conversationSearch">Filtrar por conversación:</label>
                 <input type="text" id="conversationSearch" placeholder="Buscar por título de conversación...">
@@ -236,9 +267,12 @@
             </div>
             
             <div class="filter-group">
-                <label for="projectSelect">Proyecto:</label>
-                <select id="projectSelect">
-                    <option value="1">Proyecto 1</option>
+                <label for="currentProjectFilter">Filtrar por proyecto:</label>
+                <select id="currentProjectFilter">
+                    <option value="">Todos los proyectos</option>
+                    <option value="1">MercadoSur</option>
+                    <option value="64">ChatGPT</option>
+                    <option value="67">Proyecto Principal</option>
                 </select>
             </div>
             
@@ -337,7 +371,7 @@
 
         // Buscar mensajes con filtros
         async function searchMessages() {
-            const projectId = document.getElementById('projectSelect').value;
+            const currentProjectId = document.getElementById('currentProjectFilter').value || 1;
             const search = document.getElementById('searchInput').value;
             const role = document.getElementById('roleFilter').value;
             const conversationSearch = document.getElementById('conversationSearch').value;
@@ -352,7 +386,7 @@
             
             try {
                 const queryParams = new URLSearchParams({
-                    project_id: projectId,
+                    project_id: currentProjectId,
                     limit: messagesPerPage,
                     offset: currentPage * messagesPerPage,
                     order_by: 'created_at',
@@ -383,6 +417,44 @@
             }
         }
 
+        // Función para actualizar el proyecto de una conversación
+        async function updateConversationProject(selectElement) {
+            const conversationId = selectElement.getAttribute('data-conversation-id');
+            const newProjectId = selectElement.value;
+            const oldProjectId = selectElement.getAttribute('data-old-value') || selectElement.value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/update_conversation_project.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        conversation_id: conversationId,
+                        project_id: newProjectId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Mostrar mensaje de éxito
+                    showSuccess(`Conversación movida a ${selectElement.options[selectElement.selectedIndex].text}`);
+                    // Actualizar el valor anterior para futuras comparaciones
+                    selectElement.setAttribute('data-old-value', newProjectId);
+                } else {
+                    // Revertir el cambio si falló
+                    selectElement.value = oldProjectId;
+                    showError(`Error al actualizar: ${result.error}`);
+                }
+                
+            } catch (error) {
+                // Revertir el cambio si falló
+                selectElement.value = oldProjectId;
+                showError(`Error de conexión: ${error.message}`);
+            }
+        }
+
         // Mostrar mensajes en tabla
         function displayMessages(messages) {
             const container = document.getElementById('resultsContainer');
@@ -397,6 +469,7 @@
             table.innerHTML = `
                 <thead>
                     <tr>
+                        <th>Proyecto</th>
                         <th>Conversación</th>
                         <th>Rol</th>
                         <th>Contenido</th>
@@ -405,6 +478,13 @@
                 <tbody>
                     ${messages.map(msg => `
                         <tr>
+                            <td>
+                                <select class="project-selector" data-conversation-id="${msg.conversationId}" data-old-value="${msg.projectId}" onchange="updateConversationProject(this)">
+                                    <option value="1" ${msg.projectId == 1 ? 'selected' : ''}>MercadoSur</option>
+                                    <option value="64" ${msg.projectId == 64 ? 'selected' : ''}>ChatGPT</option>
+                                    <option value="67" ${msg.projectId == 67 ? 'selected' : ''}>Proyecto Principal</option>
+                                </select>
+                            </td>
                             <td>${msg.conversationTitle}</td>
                             <td><span class="role-badge role-${msg.messageRole}">${msg.messageRole}</span></td>
                             <td class="message-content" title="${escapeHtml(msg.messageContent)}">${escapeHtml(msg.messageContent)}</td>
@@ -454,6 +534,16 @@
             container.innerHTML = `<div class="error">${message}</div>`;
         }
 
+        // Mostrar mensaje de éxito
+        function showSuccess(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="update-success">${message}</div>`;
+            // Ocultar el mensaje después de 3 segundos
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 3000);
+        }
+
         // Formatear fecha
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -484,6 +574,11 @@
 
         document.getElementById('projectSelect').addEventListener('change', function() {
             loadStats();
+            currentPage = 0;
+            searchMessages();
+        });
+
+        document.getElementById('currentProjectFilter').addEventListener('change', function() {
             currentPage = 0;
             searchMessages();
         });
