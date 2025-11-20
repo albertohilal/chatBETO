@@ -215,11 +215,8 @@
 
         <div class="filters">
             <div class="filter-group">
-                <label for="conversationFilter">Filtrar por conversación:</label>
-                <select id="conversationFilter">
-                    <option value="">Todas las conversaciones</option>
-                </select>
-                <input type="text" id="conversationSearch" placeholder="Buscar conversación..." style="margin-top: 5px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                <label for="conversationSearch">Filtrar por conversación:</label>
+                <input type="text" id="conversationSearch" placeholder="Buscar por título de conversación...">
             </div>
             
             <div class="filter-group">
@@ -280,7 +277,6 @@
         window.onload = function() {
             loadProjects();
             loadStats();
-            loadConversations();
             searchMessages();
         };
 
@@ -306,64 +302,6 @@
             }
         }
 
-        // Cargar lista de conversaciones
-        async function loadConversations() {
-            const projectId = document.getElementById('projectSelect').value;
-            
-            try {
-                const response = await fetch(`${API_BASE}/get_conversations_list.php?project_id=${projectId}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    const select = document.getElementById('conversationFilter');
-                    select.innerHTML = '<option value="">Todas las conversaciones</option>';
-                    
-                    // Guardar todas las conversaciones para el filtrado
-                    window.allConversations = data.data;
-                    
-                    data.data.forEach(conversation => {
-                        const option = document.createElement('option');
-                        option.value = conversation.id;
-                        option.textContent = `${conversation.title} (${conversation.message_count} mensajes)`;
-                        select.appendChild(option);
-                    });
-                }
-            } catch (error) {
-                console.error('Error cargando conversaciones:', error);
-            }
-        }
-
-        // Filtrar conversaciones en tiempo real
-        function filterConversations() {
-            const searchTerm = document.getElementById('conversationSearch').value.toLowerCase();
-            const select = document.getElementById('conversationFilter');
-            
-            // Limpiar opciones actuales
-            select.innerHTML = '<option value="">Todas las conversaciones</option>';
-            
-            // Filtrar conversaciones que contienen el término de búsqueda
-            if (window.allConversations) {
-                const filtered = window.allConversations.filter(conversation => 
-                    conversation.title.toLowerCase().includes(searchTerm)
-                );
-                
-                filtered.forEach(conversation => {
-                    const option = document.createElement('option');
-                    option.value = conversation.id;
-                    option.textContent = `${conversation.title} (${conversation.message_count} mensajes)`;
-                    select.appendChild(option);
-                });
-                
-                // Si hay un término de búsqueda pero no hay resultados, mostrar mensaje
-                if (searchTerm && filtered.length === 0) {
-                    const option = document.createElement('option');
-                    option.value = '';
-                    option.textContent = 'No se encontraron conversaciones';
-                    option.disabled = true;
-                    select.appendChild(option);
-                }
-            }
-        }
         async function loadStats() {
             const projectId = document.getElementById('projectSelect').value;
             
@@ -402,7 +340,7 @@
             const projectId = document.getElementById('projectSelect').value;
             const search = document.getElementById('searchInput').value;
             const role = document.getElementById('roleFilter').value;
-            const conversationId = document.getElementById('conversationFilter').value;
+            const conversationSearch = document.getElementById('conversationSearch').value;
             
             const loading = document.getElementById('loadingIndicator');
             const errorContainer = document.getElementById('errorContainer');
@@ -423,7 +361,7 @@
                 
                 if (search) queryParams.append('search', search);
                 if (role) queryParams.append('role', role);
-                if (conversationId) queryParams.append('conversation_id', conversationId);
+                if (conversationSearch) queryParams.append('conversation_search', conversationSearch);
                 
                 const response = await fetch(`${API_BASE}/messages_simple_working.php?${queryParams}`);
                 const data = await response.json();
@@ -546,7 +484,6 @@
 
         document.getElementById('projectSelect').addEventListener('change', function() {
             loadStats();
-            loadConversations();
             currentPage = 0;
             searchMessages();
         });
@@ -556,18 +493,10 @@
             searchMessages();
         });
 
-        document.getElementById('conversationFilter').addEventListener('change', function() {
-            currentPage = 0;
-            searchMessages();
-        });
-
-        document.getElementById('conversationSearch').addEventListener('input', function() {
-            filterConversations();
-        });
-
         document.getElementById('conversationSearch').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                filterConversations();
+                currentPage = 0;
+                searchMessages();
             }
         });
     </script>

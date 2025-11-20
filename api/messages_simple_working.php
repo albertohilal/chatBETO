@@ -19,7 +19,7 @@ try {
     $limit = intval($_GET['limit'] ?? 10);
     $offset = intval($_GET['offset'] ?? 0);
     $search = trim($_GET['search'] ?? '');
-    $conversation_id = intval($_GET['conversation_id'] ?? 0);
+    $conversation_search = trim($_GET['conversation_search'] ?? '');
     $role = trim($_GET['role'] ?? '');
     
     // CONSULTA ADAPTADA con JOIN correcto - buscar mensajes con contenido real
@@ -46,9 +46,9 @@ try {
         $params[] = "%$search%";
     }
     
-    if ($conversation_id > 0) {
-        $sql .= " AND conversations.id = ? ";
-        $params[] = $conversation_id;
+    if (!empty($conversation_search)) {
+        $sql .= " AND conversations.title LIKE ? ";
+        $params[] = "%$conversation_search%";
     }
     
     if (!empty($role)) {
@@ -83,9 +83,9 @@ try {
         $count_params[] = "%$search%";
     }
     
-    if ($conversation_id > 0) {
-        $count_sql .= " AND conversations.id = ? ";
-        $count_params[] = $conversation_id;
+    if (!empty($conversation_search)) {
+        $count_sql .= " AND conversations.title LIKE ? ";
+        $count_params[] = "%$conversation_search%";
     }
     
     if (!empty($role)) {
