@@ -1,8 +1,7 @@
 <?php
 /**
  * API ENDPOINT: Obtener estadísticas de un proyecto o todos los proyectos
- * Uso: api/get_project_stats.php?project_id=1 (proyecto específico)
- * Uso: api/get_project_stats.php (todos los proyectos)
+ * Muestra tanto totales absolutos como filtrados por calidad
  */
 
 header('Content-Type: application/json');
@@ -55,9 +54,45 @@ try {
         $projectName = $project['name'] ?? 'Proyecto no encontrado';
         $projectDescription = $project['description'] ?? '';
         
+        $response = [
+            'success' => true,
+            'projectId' => $project_id,
+            'projectName' => $projectName,
+            'projectDescription' => $projectDescription,
+            'stats' => [
+                'total_conversations' => intval($stats['total_conversations']),
+                'total_messages' => intval($stats['total_messages']),
+                'user_messages' => intval($stats['user_messages']),
+                'assistant_messages' => intval($stats['assistant_messages']),
+                'system_messages' => intval($stats['system_messages']),
+                'tool_messages' => intval($stats['tool_messages']),
+                'first_conversation' => $stats['first_conversation'],
+                'last_message' => $stats['last_message']
+            ],
+            'timestamp' => date('c')
+        ];
+        
     } else {
-        // Estadísticas de todos los proyectos con filtros de calidad
-        $sql = "
+        // Estadísticas de todos los proyectos - CON Y SIN filtros
+        
+        // 1. Total absoluto (sin filtros)
+        $sql_raw = "
+            SELECT 
+                COUNT(DISTINCT c.id) as total_conversations,
+                COUNT(m.id) as total_messages,
+                COUNT(CASE WHEN m.role = 'user' THEN 1 END) as user_messages,
+                COUNT(CASE WHEN m.role = 'assistant' THEN 1 END) as assistant_messages,
+                COUNT(CASE WHEN m.role = 'system' THEN 1 END) as system_messages,
+                COUNT(CASE WHEN m.role = 'tool' THEN 1 END) as tool_messages
+            FROM conversations c
+            LEFT JOIN messages m ON c.id = m.conversation_id
+        ";
+        
+        $stmt_raw = $pdo->query($sql_raw);
+        $stats_raw = $stmt_raw->fetch(PDO::FETCH_ASSOC);
+        
+        // 2. Con filtros de calidad
+        $sql_filtered = "
             SELECT 
                 COUNT(DISTINCT c.id) as total_conversations,
                 COUNT(m.id) as total_messages,
@@ -76,30 +111,37 @@ try {
             AND LENGTH(m.content) > 10
         ";
         
-        $stmt = $pdo->query($sql);
-        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt_filtered = $pdo->query($sql_filtered);
+        $stats_filtered = $stmt_filtered->fetch(PDO::FETCH_ASSOC);
         
-        $projectName = 'Todos los Proyectos';
-        $projectDescription = 'Estadísticas globales de todos los proyectos';
+        $response = [
+            'success' => true,
+            'projectId' => null,
+            'projectName' => 'Todos los Proyectos',
+            'projectDescription' => 'Estadísticas globales de todos los proyectos',
+            'stats' => [
+                'total_conversations' => intval($stats_filtered['total_conversations']),
+                'total_messages' => intval($stats_filtered['total_messages']),
+                'user_messages' => intval($stats_filtered['user_messages']),
+                'assistant_messages' => intval($stats_filtered['assistant_messages']),
+                'system_messages' => intval($stats_filtered['system_messages']),
+                'tool_messages' => intval($stats_filtered['tool_messages']),
+                'first_conversation' => $stats_filtered['first_conversation'],
+                'last_message' => $stats_filtered['last_message']
+            ],
+            'stats_raw' => [
+                'total_conversations' => intval($stats_raw['total_conversations']),
+                'total_messages' => intval($stats_raw['total_messages']),
+                'user_messages' => intval($stats_raw['user_messages']),
+                'assistant_messages' => intval($stats_raw['assistant_messages']),
+                'system_messages' => intval($stats_raw['system_messages']),
+                'tool_messages' => intval($stats_raw['tool_messages'])
+            ],
+            'timestamp' => date('c')
+        ];
     }
     
-    echo json_encode([
-        'success' => true,
-        'projectId' => $project_id,
-        'projectName' => $projectName,
-        'projectDescription' => $projectDescription,
-        'stats' => [
-            'total_conversations' => intval($stats['total_conversations']),
-            'total_messages' => intval($stats['total_messages']),
-            'user_messages' => intval($stats['user_messages']),
-            'assistant_messages' => intval($stats['assistant_messages']),
-            'system_messages' => intval($stats['system_messages']),
-            'tool_messages' => intval($stats['tool_messages']),
-            'first_conversation' => $stats['first_conversation'],
-            'last_message' => $stats['last_message']
-        ],
-        'timestamp' => date('c')
-    ]);
+    echo json_encode($response);
 
 } catch (Exception $e) {
     http_response_code(500);

@@ -350,14 +350,22 @@
                 
                 if (data.success) {
                     const stats = data.stats;
+                    const rawStats = data.stats_raw;
+                    
+                    // Mostrar estadísticas de calidad por defecto, con opción de ver totales
+                    let messagesDisplay = `${stats.total_messages}`;
+                    if (rawStats && rawStats.total_messages !== stats.total_messages) {
+                        messagesDisplay += ` <small style="opacity: 0.7; font-size: 12px;">(${rawStats.total_messages} total BD)</small>`;
+                    }
+                    
                     document.getElementById('statsContainer').innerHTML = `
                         <div class="stat-card">
                             <h3>${stats.total_conversations}</h3>
                             <p>Conversaciones</p>
                         </div>
                         <div class="stat-card">
-                            <h3>${stats.total_messages}</h3>
-                            <p>Mensajes Totales</p>
+                            <h3>${messagesDisplay}</h3>
+                            <p>Mensajes Válidos</p>
                         </div>
                         <div class="stat-card">
                             <h3>${stats.user_messages}</h3>
