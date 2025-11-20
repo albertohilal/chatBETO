@@ -19,6 +19,8 @@ try {
     $limit = intval($_GET['limit'] ?? 10);
     $offset = intval($_GET['offset'] ?? 0);
     $search = trim($_GET['search'] ?? '');
+    $conversation_id = intval($_GET['conversation_id'] ?? 0);
+    $role = trim($_GET['role'] ?? '');
     
     // CONSULTA ADAPTADA con JOIN correcto - buscar mensajes con contenido real
     $sql = "SELECT 
@@ -42,6 +44,16 @@ try {
         $sql .= " AND (messages.content LIKE ? OR conversations.title LIKE ?) ";
         $params[] = "%$search%";
         $params[] = "%$search%";
+    }
+    
+    if ($conversation_id > 0) {
+        $sql .= " AND conversations.id = ? ";
+        $params[] = $conversation_id;
+    }
+    
+    if (!empty($role)) {
+        $sql .= " AND messages.role = ? ";
+        $params[] = $role;
     }
     
     $sql .= " ORDER BY messages.created_at DESC 
@@ -69,6 +81,16 @@ try {
         $count_sql .= " AND (messages.content LIKE ? OR conversations.title LIKE ?) ";
         $count_params[] = "%$search%";
         $count_params[] = "%$search%";
+    }
+    
+    if ($conversation_id > 0) {
+        $count_sql .= " AND conversations.id = ? ";
+        $count_params[] = $conversation_id;
+    }
+    
+    if (!empty($role)) {
+        $count_sql .= " AND messages.role = ? ";
+        $count_params[] = $role;
     }
     
     $count_stmt = $pdo->prepare($count_sql);

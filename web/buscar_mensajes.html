@@ -30,7 +30,7 @@
         
         .filters {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
             padding: 20px;
@@ -220,6 +220,13 @@
             </div>
             
             <div class="filter-group">
+                <label for="conversationFilter">Filtrar por conversación:</label>
+                <select id="conversationFilter">
+                    <option value="">Todas las conversaciones</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
                 <label for="roleFilter">Filtrar por rol:</label>
                 <select id="roleFilter">
                     <option value="">Todos los roles</option>
@@ -272,6 +279,7 @@
         window.onload = function() {
             loadProjects();
             loadStats();
+            loadConversations();
             searchMessages();
         };
 
@@ -297,7 +305,29 @@
             }
         }
 
-        // Cargar estadísticas del proyecto
+        // Cargar lista de conversaciones
+        async function loadConversations() {
+            const projectId = document.getElementById('projectSelect').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/get_conversations_list.php?project_id=${projectId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('conversationFilter');
+                    select.innerHTML = '<option value="">Todas las conversaciones</option>';
+                    
+                    data.data.forEach(conversation => {
+                        const option = document.createElement('option');
+                        option.value = conversation.id;
+                        option.textContent = `${conversation.title} (${conversation.message_count} mensajes)`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando conversaciones:', error);
+            }
+        }
         async function loadStats() {
             const projectId = document.getElementById('projectSelect').value;
             
@@ -336,6 +366,7 @@
             const projectId = document.getElementById('projectSelect').value;
             const search = document.getElementById('searchInput').value;
             const role = document.getElementById('roleFilter').value;
+            const conversationId = document.getElementById('conversationFilter').value;
             
             const loading = document.getElementById('loadingIndicator');
             const errorContainer = document.getElementById('errorContainer');
@@ -356,6 +387,7 @@
                 
                 if (search) queryParams.append('search', search);
                 if (role) queryParams.append('role', role);
+                if (conversationId) queryParams.append('conversation_id', conversationId);
                 
                 const response = await fetch(`${API_BASE}/messages_simple_working.php?${queryParams}`);
                 const data = await response.json();
@@ -394,7 +426,6 @@
                         <th>Conversación</th>
                         <th>Rol</th>
                         <th>Contenido</th>
-                        <th>Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -403,7 +434,6 @@
                             <td>${msg.conversationTitle}</td>
                             <td><span class="role-badge role-${msg.messageRole}">${msg.messageRole}</span></td>
                             <td class="message-content" title="${escapeHtml(msg.messageContent)}">${escapeHtml(msg.messageContent)}</td>
-                            <td>${formatDate(msg.messageCreatedAt)}</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -480,11 +510,17 @@
 
         document.getElementById('projectSelect').addEventListener('change', function() {
             loadStats();
+            loadConversations();
             currentPage = 0;
             searchMessages();
         });
 
         document.getElementById('roleFilter').addEventListener('change', function() {
+            currentPage = 0;
+            searchMessages();
+        });
+
+        document.getElementById('conversationFilter').addEventListener('change', function() {
             currentPage = 0;
             searchMessages();
         });
