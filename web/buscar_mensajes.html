@@ -199,6 +199,27 @@
             cursor: not-allowed;
         }
         
+        /* Estilos para dropdown de proyectos */
+        .project-selector {
+            width: 100%;
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .project-selector:hover {
+            border-color: #007bff;
+        }
+        
+        .project-selector:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        
         .pagination .current-page {
             background: #007bff;
             color: white;
@@ -306,6 +327,7 @@
         let currentPage = 0;
         const messagesPerPage = 20;
         let totalMessages = 0;
+        let projectsList = []; // Lista de proyectos para los dropdowns
 
         // Cargar datos iniciales al cargar la página
         window.onload = function() {
@@ -321,6 +343,9 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    // Guardar lista global para uso en dropdowns
+                    projectsList = data.data;
+                    
                     const select = document.getElementById('projectSelect');
                     select.innerHTML = '';
                     
@@ -334,6 +359,15 @@
             } catch (error) {
                 console.error('Error cargando proyectos:', error);
             }
+        }
+
+        // Generar opciones de dropdown de proyectos para la tabla
+        function generateProjectOptions(selectedProjectId) {
+            return projectsList.map(project => 
+                `<option value="${project.id}" ${project.id == selectedProjectId ? 'selected' : ''}>
+                    ${escapeHtml(project.name)}
+                </option>`
+            ).join('');
         }
 
         async function loadStats() {
@@ -497,9 +531,7 @@
                         <tr>
                             <td>
                                 <select class="project-selector" data-conversation-id="${msg.conversationId}" data-old-value="${msg.projectId}" onchange="updateConversationProject(this)">
-                                    <option value="1" ${msg.projectId == 1 ? 'selected' : ''}>MercadoSur</option>
-                                    <option value="64" ${msg.projectId == 64 ? 'selected' : ''}>ChatGPT</option>
-                                    <option value="67" ${msg.projectId == 67 ? 'selected' : ''}>Proyecto Principal</option>
+                                    ${generateProjectOptions(msg.projectId)}
                                 </select>
                             </td>
                             <td>${msg.conversationTitle}</td>
