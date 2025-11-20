@@ -21,7 +21,7 @@ try {
     $project_id = isset($_GET['project_id']) ? intval($_GET['project_id']) : null;
     
     if ($project_id) {
-        // Estadísticas de un proyecto específico
+        // Estadísticas de un proyecto específico con filtros de calidad
         $sql = "
             SELECT 
                 COUNT(DISTINCT c.id) as total_conversations,
@@ -34,7 +34,12 @@ try {
                 MAX(m.created_at) as last_message
             FROM conversations c
             LEFT JOIN messages m ON c.id = m.conversation_id
-            WHERE c.project_id = ?
+            WHERE c.project_id = ? 
+            AND m.content IS NOT NULL 
+            AND m.content != '' 
+            AND m.content NOT LIKE '%[Respuesta del asistente no disponible]%' 
+            AND m.content NOT LIKE '%[Contenido multimedia no disponible]%'
+            AND LENGTH(m.content) > 10
         ";
         
         $stmt = $pdo->prepare($sql);
@@ -51,7 +56,7 @@ try {
         $projectDescription = $project['description'] ?? '';
         
     } else {
-        // Estadísticas de todos los proyectos
+        // Estadísticas de todos los proyectos con filtros de calidad
         $sql = "
             SELECT 
                 COUNT(DISTINCT c.id) as total_conversations,
@@ -64,6 +69,11 @@ try {
                 MAX(m.created_at) as last_message
             FROM conversations c
             LEFT JOIN messages m ON c.id = m.conversation_id
+            WHERE m.content IS NOT NULL 
+            AND m.content != '' 
+            AND m.content NOT LIKE '%[Respuesta del asistente no disponible]%' 
+            AND m.content NOT LIKE '%[Contenido multimedia no disponible]%'
+            AND LENGTH(m.content) > 10
         ";
         
         $stmt = $pdo->query($sql);
