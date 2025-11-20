@@ -1,26 +1,28 @@
 #!/bin/bash
 
-# 🚀 Iniciar servidor PHP integrado para ChatBETO
-# Puerto: 8002
-# Directorio: chatBETO (donde están los archivos web y api)
+# 🚀 Script para iniciar el servidor PHP de desarrollo
+# Ahora usa el servidor estable con auto-restart
 
-# Asegurar que estamos en el directorio correcto
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
-
-echo "🚀 Iniciando servidor PHP en puerto 8002..."
+echo "🚀 Usando servidor PHP estable..."
 echo "📂 Directorio: $(pwd)"
-echo "🌐 URL: http://localhost:8002"
 echo ""
-echo "Endpoints disponibles:"
-echo "  - http://localhost:8002/web/buscar_mensajes.html"
-echo "  - http://localhost:8002/api/messages_simple_working.php"
-echo ""
-echo "Archivos en web/:"
-ls web/ | sed 's/^/    - /'
-echo ""
-echo "Presiona Ctrl+C para detener el servidor"
-echo "============================================="
 
-# Iniciar servidor PHP
+# Verificar que estamos en el directorio correcto
+if [ ! -d "web" ] || [ ! -d "api" ]; then
+    echo "❌ ERROR: No se encontraron los directorios 'web' y 'api'"
+    echo "   Asegúrate de estar en el directorio raíz del proyecto"
+    exit 1
+fi
+
+# Usar el servidor estable
+if [ -f "start_stable_server.sh" ]; then
+    echo "✅ Iniciando servidor estable..."
+    ./start_stable_server.sh start
+else
+    echo "⚠️  Servidor estable no encontrado, usando servidor básico..."
+    echo "🌐 URL: http://localhost:8002/web/buscar_mensajes.html"
+    echo "🔗 API: http://localhost:8002/api/messages_simple_working.php"
+    echo ""
+    php -S localhost:8002
+fi
 php -S localhost:8002
