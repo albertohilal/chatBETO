@@ -21,6 +21,7 @@ try {
     $search = trim($_GET['search'] ?? '');
     $conversation_search = trim($_GET['conversation_search'] ?? '');
     $role = trim($_GET['role'] ?? '');
+    $project_id = intval($_GET['project_id'] ?? 0);
     
     // CONSULTA ADAPTADA con JOIN correcto - buscar mensajes con contenido real
     $sql = "SELECT 
@@ -39,6 +40,12 @@ try {
             AND LENGTH(messages.content) > 10 ";
     
     $params = [];
+    
+    // Filtro por proyecto (si se especifica)
+    if ($project_id > 0) {
+        $sql .= " AND conversations.project_id = ? ";
+        $params[] = $project_id;
+    }
     
     if (!empty($search)) {
         $sql .= " AND (messages.content LIKE ? OR conversations.title LIKE ?) ";
@@ -76,6 +83,12 @@ try {
                   AND LENGTH(messages.content) > 10 ";
     
     $count_params = [];
+    
+    // Filtro por proyecto en el conteo también
+    if ($project_id > 0) {
+        $count_sql .= " AND conversations.project_id = ? ";
+        $count_params[] = $project_id;
+    }
     
     if (!empty($search)) {
         $count_sql .= " AND (messages.content LIKE ? OR conversations.title LIKE ?) ";
