@@ -20,22 +20,26 @@ try {
     $offset = intval($_GET['offset'] ?? 0);
     $search = trim($_GET['search'] ?? '');
     
-    // CONSULTA ADAPTADA con JOIN correcto
+    // CONSULTA ADAPTADA con JOIN correcto - buscar mensajes con contenido real
     $sql = "SELECT 
                 conversations.id as conversation_id, 
                 conversations.project_id, 
                 messages.created_at,
                 conversations.title,
-                messages.author_role as role,
-                messages.content_text as content
+                messages.role as role,
+                messages.content as content
             FROM conversations
             LEFT JOIN messages ON messages.conversation_id = conversations.id
-            WHERE messages.content_text IS NOT NULL ";
+            WHERE messages.content IS NOT NULL 
+            AND messages.content != '' 
+            AND messages.content NOT LIKE '%[Respuesta del asistente no disponible]%' 
+            AND messages.content NOT LIKE '%[Contenido multimedia no disponible]%'
+            AND LENGTH(messages.content) > 10 ";
     
     $params = [];
     
     if (!empty($search)) {
-        $sql .= " AND (messages.content_text LIKE ? OR conversations.title LIKE ?) ";
+        $sql .= " AND (messages.content LIKE ? OR conversations.title LIKE ?) ";
         $params[] = "%$search%";
         $params[] = "%$search%";
     }
@@ -53,12 +57,16 @@ try {
     $count_sql = "SELECT COUNT(*) as total
                   FROM conversations
                   LEFT JOIN messages ON messages.conversation_id = conversations.id
-                  WHERE messages.content_text IS NOT NULL ";
+                  WHERE messages.content IS NOT NULL 
+                  AND messages.content != '' 
+                  AND messages.content NOT LIKE '%[Respuesta del asistente no disponible]%' 
+                  AND messages.content NOT LIKE '%[Contenido multimedia no disponible]%'
+                  AND LENGTH(messages.content) > 10 ";
     
     $count_params = [];
     
     if (!empty($search)) {
-        $count_sql .= " AND (messages.content_text LIKE ? OR conversations.title LIKE ?) ";
+        $count_sql .= " AND (messages.content LIKE ? OR conversations.title LIKE ?) ";
         $count_params[] = "%$search%";
         $count_params[] = "%$search%";
     }
