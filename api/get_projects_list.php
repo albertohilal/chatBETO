@@ -17,7 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once '../database/db_connection.php';
 
 try {
-    // Obtener proyectos con estadísticas
+    // Parámetros de búsqueda
+    $search = trim($_GET['search'] ?? '');
+    
+    // Construir consulta SQL base
     $sql = "
         SELECT 
             p.id, 
@@ -30,13 +33,22 @@ try {
             MAX(m.created_at) as last_activity
         FROM projects p
         LEFT JOIN conversations c ON p.id = c.project_id
-        LEFT JOIN messages m ON c.id = m.conversation_id
-        GROUP BY p.id, p.name, p.description, p.created_at, p.is_starred
-        ORDER BY p.created_at DESC
-    ";
+        LEFT JOIN messages m ON c.id = m.conversation_id";
+    
+    $params = [];
+    
+    // Agregar filtro de búsqueda si se especifica
+    if (!empty($search)) {
+        $sql .= " WHERE (p.name LIKE ? OR p.description LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+    }
+    
+    $sql .= " GROUP BY p.id, p.name, p.description, p.created_at, p.is_starred
+              ORDER BY p.created_at DESC";
     
     $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Formatear datos
@@ -57,6 +69,8 @@ try {
         'success' => true,
         'data' => $formatted_projects,
         'totalProjects' => count($formatted_projects),
+        'searchTerm' => $search,
+        'isFiltered' => !empty($search),
         'timestamp' => date('c')
     ]);
 
