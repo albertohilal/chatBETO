@@ -30,7 +30,7 @@
         
         .filters {
             display: grid;
-            grid-template-columns: 1fr 1.5fr 1.5fr 1fr 1fr 1fr;
+            grid-template-columns: 1.5fr 1.5fr 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
             padding: 20px;
@@ -301,20 +301,25 @@
         <div class="header">
             <h1>🔍 Buscar Mensajes en Chat</h1>
             <p>Reporte de mensajes y conversaciones - ChatBETO</p>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="viewMessages" class="search-btn" onclick="switchToMessageView()" style="margin-right: 10px; background: #007bff;">
+                    📋 Vista de Mensajes
+                </button>
+                <button id="viewConversations" class="search-btn" onclick="switchToConversationView()" style="background: #6c757d;">
+                    💬 Vista de Conversaciones
+                </button>
+            </div>
         </div>
 
         <div class="filters">
             <div class="filter-group">
-                <label for="projectSelect">Proyecto:</label>
-                <select id="projectSelect">
-                    <option value="1">Proyecto 1</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="projectSearch">Buscar proyectos:</label>
-                <input type="text" id="projectSearch" placeholder="Ej: ChatGPT, Fiverr, VGR..." onkeyup="filterProjects(this.value)">
-                <small style="color: #666; font-size: 11px;">Filtrar lista de proyectos por nombre</small>
+                <label for="projectCombo">Proyecto:</label>
+                <input type="text" id="projectCombo" list="projectsList" placeholder="Escribir o seleccionar proyecto..." autocomplete="off">
+                <datalist id="projectsList">
+                    <!-- Opciones se cargan dinámicamente -->
+                </datalist>
+                <small style="color: #666; font-size: 11px;">Escribir para buscar o seleccionar de la lista</small>
             </div>
             
             <div class="filter-group">
@@ -335,16 +340,6 @@
                     <option value="assistant">Asistente</option>
                     <option value="system">Sistema</option>
                     <option value="tool">Herramienta</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="currentProjectFilter">Filtrar por proyecto:</label>
-                <select id="currentProjectFilter">
-                    <option value="">Todos los proyectos</option>
-                    <option value="1">MercadoSur</option>
-                    <option value="64">ChatGPT</option>
-                    <option value="67">Proyecto Principal</option>
                 </select>
             </div>
             
@@ -379,6 +374,7 @@
         const messagesPerPage = 20;
         let totalMessages = 0;
         let projectsList = []; // Lista de proyectos para los dropdowns
+        let currentView = 'messages'; // 'messages' o 'conversations'
 
         // Cargar datos iniciales al cargar la página
         window.onload = function() {
@@ -397,8 +393,8 @@
                     // Guardar lista global para uso en dropdowns
                     projectsList = data.data;
                     
-                    // Actualizar dropdown principal
-                    updateProjectSelect(data.data);
+                    // Actualizar datalist de proyectos
+                    updateProjectDatalist(data.data);
                 }
             } catch (error) {
                 console.error('Error cargando proyectos:', error);
@@ -501,54 +497,89 @@
             ).join('');
         }
 
-        // Filtrar proyectos por nombre
-        async function filterProjects(searchTerm) {
-            try {
-                const response = await fetch(`${API_BASE}/get_projects_list.php?search=${encodeURIComponent(searchTerm)}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Actualizar lista global
-                    projectsList = data.data;
-                    
-                    // Actualizar dropdown de proyectos
-                    updateProjectSelect(data.data);
-                    
-                    // Mostrar información de filtrado
-                    const infoElement = document.querySelector('#projectSearch + small');
-                    if (data.isFiltered) {
-                        infoElement.textContent = `${data.totalProjects} proyectos encontrados para "${searchTerm}"`;
-                        infoElement.style.color = '#007bff';
-                    } else {
-                        infoElement.textContent = 'Filtrar lista de proyectos por nombre';
-                        infoElement.style.color = '#666';
-                    }
-                }
-            } catch (error) {
-                console.error('Error filtrando proyectos:', error);
+        // Filtrar proyectos dinámicamente mientras se escribe
+        function filterProjectsLive() {
+            const input = document.getElementById('projectCombo');
+            const searchTerm = input.value.toLowerCase().trim();
+            
+            if (searchTerm.length < 2 && searchTerm !== '') {
+                return; // No filtrar para términos muy cortos
             }
+            
+            const filteredProjects = searchTerm === '' ? 
+                projectsList : 
+                projectsList.filter(project =>
+                    project.name.toLowerCase().includes(searchTerm) ||
+                    project.description.toLowerCase().includes(searchTerm)
+                );
+            
+            updateProjectDatalist(filteredProjects);
         }
 
-        // Actualizar dropdown de proyectos
-        function updateProjectSelect(projects) {
-            const select = document.getElementById('projectSelect');
-            const currentValue = select.value;
+        // Funciones para cambio de vista
+        function switchToMessageView() {
+            currentView = 'messages';
+            document.getElementById('viewMessages').style.background = '#007bff';
+            document.getElementById('viewConversations').style.background = '#6c757d';
+            currentPage = 0;
+            searchMessages();
+        }
+
+        function switchToConversationView() {
+            currentView = 'conversations';
+            document.getElementById('viewMessages').style.background = '#6c757d';
+            document.getElementById('viewConversations').style.background = '#007bff';
+            currentPage = 0;
+            searchConversations();
+        }
+
+        // Actualizar datalist de proyectos
+        function updateProjectDatalist(projects) {
+            const datalist = document.getElementById('projectsList');
             
-            select.innerHTML = '';
+            datalist.innerHTML = '';
+            
+            // Agregar opción para todos los proyectos
+            const allOption = document.createElement('option');
+            allOption.value = 'Todos los proyectos';
+            allOption.setAttribute('data-project-id', '');
+            datalist.appendChild(allOption);
             
             projects.forEach(project => {
                 const option = document.createElement('option');
-                option.value = project.id;
-                option.textContent = `${project.name} (${project.message_count} mensajes)`;
-                if (project.id == currentValue) {
-                    option.selected = true;
-                }
-                select.appendChild(option);
+                option.value = `${project.name} (${project.message_count} mensajes)`;
+                option.setAttribute('data-project-id', project.id);
+                option.setAttribute('data-project-name', project.name);
+                datalist.appendChild(option);
             });
         }
 
+        // Obtener ID del proyecto seleccionado
+        function getSelectedProjectId() {
+            const input = document.getElementById('projectCombo');
+            const inputValue = input.value.trim();
+            
+            if (!inputValue || inputValue === 'Todos los proyectos') {
+                return '';
+            }
+            
+            // Buscar por nombre exacto primero
+            const exactMatch = projectsList.find(p => p.name === inputValue);
+            if (exactMatch) {
+                return exactMatch.id;
+            }
+            
+            // Buscar por nombre dentro del valor mostrado (ej: "Nombre (123 mensajes)")
+            const project = projectsList.find(p => 
+                inputValue.includes(p.name) || 
+                p.name.toLowerCase().includes(inputValue.toLowerCase())
+            );
+            
+            return project ? project.id : '';
+        }
+
         async function loadStats() {
-            const projectId = document.getElementById('currentProjectFilter').value;
+            const projectId = getSelectedProjectId();
             
             try {
                 // Si no hay proyecto seleccionado, usar endpoint sin filtro de proyecto
@@ -595,7 +626,7 @@
 
         // Buscar mensajes con filtros
         async function searchMessages() {
-            const currentProjectId = document.getElementById('currentProjectFilter').value;
+            const currentProjectId = getSelectedProjectId();
             const search = document.getElementById('searchInput').value;
             const role = document.getElementById('roleFilter').value;
             const conversationSearch = document.getElementById('conversationSearch').value;
@@ -612,8 +643,8 @@
                 const queryParams = new URLSearchParams({
                     limit: messagesPerPage,
                     offset: currentPage * messagesPerPage,
-                    order_by: 'created_at',
-                    order_direction: 'DESC'
+                    order_by: 'conversation_id, created_at',
+                    order_direction: 'ASC'
                 });
                 
                 // Solo agregar project_id si hay un proyecto específico seleccionado
@@ -642,6 +673,58 @@
                 loading.style.display = 'none';
                 showError(`Error de conexión: ${error.message}`);
                 console.error('Error buscando mensajes:', error);
+            }
+        }
+
+        // Buscar conversaciones completas (Opción 3)
+        async function searchConversations() {
+            const currentProjectId = getSelectedProjectId();
+            const search = document.getElementById('searchInput').value;
+            const role = document.getElementById('roleFilter').value;
+            const conversationSearch = document.getElementById('conversationSearch').value;
+            
+            const loading = document.getElementById('loadingIndicator');
+            const errorContainer = document.getElementById('errorContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            loading.style.display = 'block';
+            errorContainer.innerHTML = '';
+            resultsContainer.innerHTML = '';
+            
+            try {
+                // Para la vista de conversaciones, usamos los mismos parámetros pero diferente visualización
+                const queryParams = new URLSearchParams({
+                    limit: messagesPerPage * 3, // Más mensajes para mostrar conversaciones completas
+                    offset: currentPage * messagesPerPage,
+                    order_by: 'conversation_id, created_at',
+                    order_direction: 'ASC'
+                });
+                
+                if (currentProjectId) {
+                    queryParams.append('project_id', currentProjectId);
+                }
+                
+                if (search) queryParams.append('search', search);
+                if (role) queryParams.append('role', role);
+                if (conversationSearch) queryParams.append('conversation_search', conversationSearch);
+                
+                const response = await fetch(`${API_BASE}/messages_simple_working.php?${queryParams}`);
+                const data = await response.json();
+                
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    displayConversations(data.data);
+                    totalMessages = data.totalMessages || data.count || 0; 
+                    updatePagination();
+                } else {
+                    showError(`Error: ${data.error}`);
+                }
+                
+            } catch (error) {
+                loading.style.display = 'none';
+                showError(`Error de conexión: ${error.message}`);
+                console.error('Error buscando conversaciones:', error);
             }
         }
 
@@ -704,8 +787,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    ${messages.map(msg => `
-                        <tr>
+                    ${messages.map((msg, index) => {
+                        const isNewConversation = index === 0 || messages[index - 1].conversationId !== msg.conversationId;
+                        const conversationBorder = isNewConversation ? 'style="border-top: 3px solid #007bff;"' : '';
+                        const conversationIndicator = isNewConversation ? '<small style="color: #007bff; font-weight: bold;">📁 Nueva conversación</small><br>' : '';
+                        
+                        return `
+                        <tr ${conversationBorder}>
                             <td>
                                 <input type="text" 
                                        class="project-search-input" 
@@ -720,15 +808,85 @@
                                     ${generateProjectDatalistOptions()}
                                 </datalist>
                             </td>
-                            <td>${msg.conversationTitle}</td>
+                            <td>
+                                ${conversationIndicator}${msg.conversationTitle}
+                                ${isNewConversation ? `<br><small style="color: #666;">ID: ${msg.conversationId}</small>` : ''}
+                            </td>
                             <td><span class="role-badge role-${msg.messageRole}">${msg.messageRole}</span></td>
                             <td class="message-content" title="${escapeHtml(msg.messageContent)}">${escapeHtml(msg.messageContent)}</td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </tbody>
             `;
             
             container.appendChild(table);
+        }
+
+        // Mostrar conversaciones agrupadas (Vista de conversaciones)
+        function displayConversations(messages) {
+            const container = document.getElementById('resultsContainer');
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="error">No se encontraron conversaciones con los filtros aplicados.</div>';
+                return;
+            }
+            
+            // Agrupar mensajes por conversación
+            const conversations = {};
+            messages.forEach(msg => {
+                if (!conversations[msg.conversationId]) {
+                    conversations[msg.conversationId] = {
+                        id: msg.conversationId,
+                        title: msg.conversationTitle,
+                        projectId: msg.projectId,
+                        messages: []
+                    };
+                }
+                conversations[msg.conversationId].messages.push(msg);
+            });
+            
+            // Crear HTML para cada conversación
+            const conversationsHtml = Object.values(conversations).map(conversation => `
+                <div style="margin-bottom: 30px; border: 2px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                    <div style="background: #f8f9fa; padding: 15px; border-bottom: 1px solid #e0e0e0;">
+                        <h3 style="margin: 0; color: #333;">
+                            💬 ${conversation.title}
+                        </h3>
+                        <div style="margin-top: 10px;">
+                            <strong>Proyecto:</strong>
+                            <input type="text" 
+                                   class="project-search-input" 
+                                   data-conversation-id="${conversation.id}" 
+                                   data-current-project-id="${conversation.projectId}"
+                                   value="${getProjectName(conversation.projectId)}"
+                                   placeholder="Buscar proyecto..."
+                                   list="projects-datalist-${conversation.id}"
+                                   onchange="updateConversationProjectByName(this)"
+                                   oninput="filterProjectsForRow(this)"
+                                   style="margin-left: 10px;">
+                            <datalist id="projects-datalist-${conversation.id}">
+                                ${generateProjectDatalistOptions()}
+                            </datalist>
+                            <small style="color: #666; margin-left: 20px;">ID: ${conversation.id}</small>
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        ${conversation.messages.map((msg, index) => `
+                            <div style="margin-bottom: 15px; padding: 12px; border-radius: 6px; 
+                                        background: ${msg.messageRole === 'user' ? '#e3f2fd' : msg.messageRole === 'assistant' ? '#e8f5e8' : '#fff3e0'};">
+                                <div style="margin-bottom: 8px;">
+                                    <span class="role-badge role-${msg.messageRole}">${msg.messageRole}</span>
+                                    <small style="color: #666; margin-left: 10px;">Mensaje ${index + 1}</small>
+                                </div>
+                                <div style="white-space: pre-wrap; word-break: break-word;">${escapeHtml(msg.messageContent)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = conversationsHtml;
         }
 
         // Actualizar paginación
@@ -807,13 +965,12 @@
             }
         });
 
-        document.getElementById('projectSelect').addEventListener('change', function() {
-            loadStats();
-            currentPage = 0;
-            searchMessages();
+        document.getElementById('projectCombo').addEventListener('input', function() {
+            filterProjectsLive();
         });
 
-        document.getElementById('currentProjectFilter').addEventListener('change', function() {
+        document.getElementById('projectCombo').addEventListener('change', function() {
+            loadStats();
             currentPage = 0;
             searchMessages();
         });
